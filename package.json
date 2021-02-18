@@ -1,0 +1,38 @@
+{
+  "name": "bugzilla",
+  "version": "0.1.0",
+  "description": "A NodeJS module to access Bugzilla instances through the REST API.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mossop/bugzilla-ts.git"
+  },
+  "keywords": [
+    "bugzilla",
+    "node",
+    "nodejs",
+    "typescript",
+    "javascript"
+  ],
+  "author": "Dave Townsend <dtownsend@oxymoronical.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mossop/bugzilla-ts/issues"
+  },
+  "homepage": "https://github.com/Mossop/bugzilla-ts#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.15.1",
+    "@typescript-eslint/parser": "^4.15.1",
+    "eslint": "^7.20.0",
+    "eslint-import-resolver-ts": "^0.4.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-mossop": "github:Mossop/eslint-plugin-mossop#1.0.12",
+    "typescript": "^4.1.5"
+  }
+}
