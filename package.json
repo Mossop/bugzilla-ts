@@ -7,6 +7,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -27,6 +28,8 @@
   },
   "homepage": "https://github.com/Mossop/bugzilla-ts#readme",
   "devDependencies": {
+    "@types/node": "^14.14.28",
+    "@types/node-fetch": "^2.5.8",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",
     "eslint": "^7.20.0",
@@ -34,5 +37,8 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-mossop": "github:Mossop/eslint-plugin-mossop#1.0.12",
     "typescript": "^4.1.5"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.1"
   }
 }
