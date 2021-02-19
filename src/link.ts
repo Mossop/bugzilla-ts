@@ -1,9 +1,18 @@
-import { URL } from "url";
+import { URLSearchParams, URL } from "url";
 
 import type { RequestInit, Response } from "node-fetch";
 import fetch from "node-fetch";
 
 import type { Validator } from "./validators";
+
+export type SearchParams = Record<string, string> | [string, string][] | string | URLSearchParams;
+export function params(search: SearchParams): URLSearchParams {
+  if (search instanceof URLSearchParams) {
+    return search;
+  }
+
+  return new URLSearchParams(search);
+}
 
 /**
  * Responsible for requesting data from the bugzilla instance handling any
@@ -19,16 +28,11 @@ export abstract class BugzillaLink {
 
   protected abstract request(url: URL, options: RequestInit): Promise<Response>;
 
-  protected buildURL(path: string, params: Record<string, string | undefined> = {}): URL {
+  protected buildURL(path: string, query?: SearchParams): URL {
     let url = new URL(path, this.instance);
-    for (let [key, value] of Object.entries(params)) {
-      if (value === undefined) {
-        continue;
-      }
-
-      url.searchParams.set(key, value);
+    if (query) {
+      url.search = params(query).toString();
     }
-
     return url;
   }
 
@@ -48,7 +52,7 @@ export abstract class BugzillaLink {
   public async get<T>(
     path: string,
     validator: Validator<T>,
-    params: Record<string, string | undefined> = {},
+    params?: SearchParams,
   ): Promise<T> {
     let response = await this.request(
       this.buildURL(path, params),
@@ -69,7 +73,7 @@ export abstract class BugzillaLink {
     path: string,
     validator: Validator<T>,
     content: R,
-    params: Record<string, string | undefined> = {},
+    params?: SearchParams,
   ): Promise<T> {
     let response = await this.request(
       this.buildURL(path, params),
@@ -129,7 +133,7 @@ export class PasswordLink extends BugzillaLink {
   private async login(): Promise<string> {
     let response = await fetch(
       this.buildURL("/rest/login", {
-        restrict_login: this.restrictLogin ? "true" : "false",
+        restrict_login: String(this.restrictLogin),
       }),
       {
         method: "GET",

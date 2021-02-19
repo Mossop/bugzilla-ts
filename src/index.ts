@@ -1,7 +1,7 @@
-import { URL } from "url";
+import { URL, URLSearchParams } from "url";
 
-import type { BugzillaLink } from "./link";
-import { PasswordLink, ApiKeyLink } from "./link";
+import type { BugzillaLink, SearchParams } from "./link";
+import { params, PasswordLink, ApiKeyLink } from "./link";
 import { FilteredQuery } from "./query";
 import type { Bug, Version, User } from "./types";
 import { BugSpec, UserSpec, VersionSpec } from "./types";
@@ -44,24 +44,53 @@ export default class BugzillaAPI {
     return this.link.get("whoami", object(UserSpec));
   }
 
+  public searchBugs(
+    query: SearchParams,
+  ): FilteredQuery<Bug[]> {
+    return new FilteredQuery(
+      async (includes: string[] | undefined, excludes: string[] | undefined): Promise<Bug[]> => {
+        let search = params(query);
+        if (includes) {
+          search.set("include_fields", includes.join(","));
+        }
+        if (excludes) {
+          search.set("exclude_fields", excludes.join(","));
+        }
+
+        let result = await this.link.get(
+          "bug",
+          object({
+            bugs: array(object(BugSpec, includes, excludes)),
+          }),
+          search,
+        );
+
+        return result.bugs;
+      },
+    );
+  }
+
   public getBug(id: number): FilteredQuery<Bug | null> {
     return new FilteredQuery(
       async (
         includes: string[] | undefined,
         excludes: string[] | undefined,
       ): Promise<Bug | null> => {
+        let params = new URLSearchParams();
+        params.set("id", id.toString());
+        if (includes) {
+          params.set("include_fields", includes.join(","));
+        }
+        if (excludes) {
+          params.set("exclude_fields", excludes.join(","));
+        }
+
         let result = await this.link.get(
           "bug",
           object({
             bugs: array(object(BugSpec, includes, excludes)),
           }),
-          {
-            id: id.toString(),
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            include_fields: includes?.join(","),
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            exclude_fields: excludes?.join(","),
-          },
+          params,
         );
 
         return result.bugs.length ? result.bugs[0] : null;
@@ -70,24 +99,32 @@ export default class BugzillaAPI {
   }
 
   public getBugs(ids: number[]): FilteredQuery<Bug[]> {
-    return new FilteredQuery(
-      async (includes: string[] | undefined, excludes: string[] | undefined): Promise<Bug[]> => {
-        let result = await this.link.get(
-          "bug",
-          object({
-            bugs: array(object(BugSpec, includes, excludes)),
-          }),
-          {
-            id: ids.join(","),
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            include_fields: includes?.join(","),
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            exclude_fields: excludes?.join(","),
-          },
-        );
+    return this.searchBugs({
+      id: ids.join(","),
+    });
+  }
 
-        return result.bugs;
-      },
-    );
+  public quicksearch(query: string): FilteredQuery<Bug[]> {
+    return this.searchBugs({
+      quicksearch: query,
+    });
+  }
+
+  public advancedSearch(
+    query: string | URL | Record<string, string> | [string, string][] | URLSearchParams,
+  ): FilteredQuery<Bug[]> {
+    if (query instanceof URL) {
+      query = query.searchParams;
+    } else if (typeof query == "string" && query.startsWith("http")) {
+      query = new URL(query).searchParams;
+    }
+
+    if (!(query instanceof URLSearchParams)) {
+      query = new URLSearchParams(query);
+    }
+
+    query.delete("list_id");
+
+    return this.searchBugs(query);
   }
 }
