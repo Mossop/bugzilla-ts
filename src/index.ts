@@ -2,9 +2,10 @@ import { URL } from "url";
 
 import type { BugzillaLink } from "./link";
 import { PasswordLink, ApiKeyLink } from "./link";
-import type { Version, Whoami } from "./types";
-import { WhoamiSpec, VersionSpec } from "./types";
-import { object } from "./validators";
+import { FilteredQuery } from "./query";
+import type { Bug, Version, User } from "./types";
+import { BugSpec, UserSpec, VersionSpec } from "./types";
+import { array, object } from "./validators";
 
 export default class BugzillaAPI {
   private readonly link: BugzillaLink;
@@ -39,7 +40,29 @@ export default class BugzillaAPI {
     return version.version;
   }
 
-  public whoami(): Promise<Whoami> {
-    return this.link.get("whoami", object(WhoamiSpec));
+  public whoami(): Promise<User> {
+    return this.link.get("whoami", object(UserSpec));
+  }
+
+  public getBugs(ids: number[]): FilteredQuery<Bug[]> {
+    return new FilteredQuery(
+      async (includes: string[] | undefined, excludes: string[] | undefined): Promise<Bug[]> => {
+        let result = await this.link.get(
+          "bug",
+          object({
+            bugs: array(object(BugSpec, includes, excludes)),
+          }),
+          {
+            id: ids.join(","),
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            include_fields: includes?.join(","),
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            exclude_fields: excludes?.join(","),
+          },
+        );
+
+        return result.bugs;
+      },
+    );
   }
 }

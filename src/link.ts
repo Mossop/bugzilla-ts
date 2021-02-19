@@ -19,9 +19,13 @@ export abstract class BugzillaLink {
 
   protected abstract request(url: URL, options: RequestInit): Promise<Response>;
 
-  protected buildURL(path: string, params: Record<string, string> = {}): URL {
+  protected buildURL(path: string, params: Record<string, string | undefined> = {}): URL {
     let url = new URL(path, this.instance);
     for (let [key, value] of Object.entries(params)) {
+      if (value === undefined) {
+        continue;
+      }
+
       url.searchParams.set(key, value);
     }
 
@@ -44,7 +48,7 @@ export abstract class BugzillaLink {
   public async get<T>(
     path: string,
     validator: Validator<T>,
-    params: Record<string, string> = {},
+    params: Record<string, string | undefined> = {},
   ): Promise<T> {
     let response = await this.request(
       this.buildURL(path, params),
@@ -65,7 +69,7 @@ export abstract class BugzillaLink {
     path: string,
     validator: Validator<T>,
     content: R,
-    params: Record<string, string> = {},
+    params: Record<string, string | undefined> = {},
   ): Promise<T> {
     let response = await this.request(
       this.buildURL(path, params),
