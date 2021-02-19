@@ -44,6 +44,31 @@ export default class BugzillaAPI {
     return this.link.get("whoami", object(UserSpec));
   }
 
+  public getBug(id: number): FilteredQuery<Bug | null> {
+    return new FilteredQuery(
+      async (
+        includes: string[] | undefined,
+        excludes: string[] | undefined,
+      ): Promise<Bug | null> => {
+        let result = await this.link.get(
+          "bug",
+          object({
+            bugs: array(object(BugSpec, includes, excludes)),
+          }),
+          {
+            id: id.toString(),
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            include_fields: includes?.join(","),
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            exclude_fields: excludes?.join(","),
+          },
+        );
+
+        return result.bugs.length ? result.bugs[0] : null;
+      },
+    );
+  }
+
   public getBugs(ids: number[]): FilteredQuery<Bug[]> {
     return new FilteredQuery(
       async (includes: string[] | undefined, excludes: string[] | undefined): Promise<Bug[]> => {

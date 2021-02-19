@@ -33,7 +33,8 @@ abstract class Executable<T> implements Promisish<T> {
 }
 
 type Keys<T> = keyof T & string;
-type Filtered<T, I extends keyof T, E extends keyof T> = Omit<Pick<T, I>, E>;
+type Filtered<T, I extends keyof T, E extends keyof T> =
+  T extends null | undefined ? T : Omit<Pick<T, I>, E>;
 
 type FilterExec<T, I extends keyof T, E extends keyof T> = (
   includes: Keys<T>[] | undefined,
