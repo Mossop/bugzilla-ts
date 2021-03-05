@@ -1,7 +1,7 @@
 import { URL, URLSearchParams } from "url";
 
 import type { BugzillaLink, SearchParams } from "./link";
-import { params, PasswordLink, ApiKeyLink } from "./link";
+import { PublicLink, params, PasswordLink, ApiKeyLink } from "./link";
 import { FilteredQuery } from "./query";
 import type { Bug, Version, User } from "./types";
 import { BugSpec, UserSpec, VersionSpec } from "./types";
@@ -10,6 +10,7 @@ import { array, object } from "./validators";
 export default class BugzillaAPI {
   private readonly link: BugzillaLink;
 
+  public constructor(instance: URL | string);
   public constructor(instance: URL | string, apiKey: string);
   public constructor(
     instance: URL | string,
@@ -19,7 +20,7 @@ export default class BugzillaAPI {
   );
   public constructor(
     instance: URL | string,
-    user: string,
+    user?: string,
     password?: string,
     restrictLogin: boolean = false,
   ) {
@@ -27,7 +28,9 @@ export default class BugzillaAPI {
       instance = new URL(instance);
     }
 
-    if (password !== undefined) {
+    if (!user) {
+      this.link = new PublicLink(instance);
+    } else if (password !== undefined) {
       this.link = new PasswordLink(instance, user, password, restrictLogin);
     } else {
       this.link = new ApiKeyLink(instance, user);

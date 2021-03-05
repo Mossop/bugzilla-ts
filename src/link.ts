@@ -94,6 +94,12 @@ export abstract class BugzillaLink {
   }
 }
 
+export class PublicLink extends BugzillaLink {
+  protected async request(url: URL, options: RequestInit): Promise<Response> {
+    return fetch(url, options);
+  }
+}
+
 /**
  * Handles authentication using an API key.
  */
