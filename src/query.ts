@@ -39,13 +39,13 @@ type Filtered<T, I extends keyof T, E extends keyof T> =
 type FilterExec<T, I extends keyof T, E extends keyof T> = (
   includes: Keys<T>[] | undefined,
   excludes: Keys<T>[] | undefined,
-) => Promise<Filtered<T, I, E>>;
+) => Promise<Filtered<T, I, E>[]>;
 
 export class FilteredQuery<
   T,
   I extends keyof T = keyof T,
   E extends keyof T = never,
-> extends Executable<Filtered<T, I, E>> {
+> extends Executable<Filtered<T, I, E>[]> {
   private includes: Keys<T>[] | undefined;
   private excludes: Keys<T>[] | undefined;
 
@@ -53,7 +53,7 @@ export class FilteredQuery<
     super();
   }
 
-  protected execute(): Promise<Filtered<T, I, E>> {
+  protected execute(): Promise<Filtered<T, I, E>[]> {
     return this.exec(this.includes, this.excludes);
   }
 

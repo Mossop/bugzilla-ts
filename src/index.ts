@@ -7,6 +7,8 @@ import type { Bug, Version, User } from "./types";
 import { BugSpec, UserSpec, VersionSpec } from "./types";
 import { array, object } from "./validators";
 
+export type { Bug };
+
 export default class BugzillaAPI {
   private readonly link: BugzillaLink;
 
@@ -49,7 +51,7 @@ export default class BugzillaAPI {
 
   public searchBugs(
     query: SearchParams,
-  ): FilteredQuery<Bug[]> {
+  ): FilteredQuery<Bug> {
     return new FilteredQuery(
       async (includes: string[] | undefined, excludes: string[] | undefined): Promise<Bug[]> => {
         let search = params(query);
@@ -73,41 +75,13 @@ export default class BugzillaAPI {
     );
   }
 
-  public getBug(id: number): FilteredQuery<Bug | null> {
-    return new FilteredQuery(
-      async (
-        includes: string[] | undefined,
-        excludes: string[] | undefined,
-      ): Promise<Bug | null> => {
-        let params = new URLSearchParams();
-        params.set("id", id.toString());
-        if (includes) {
-          params.set("include_fields", includes.join(","));
-        }
-        if (excludes) {
-          params.set("exclude_fields", excludes.join(","));
-        }
-
-        let result = await this.link.get(
-          "bug",
-          object({
-            bugs: array(object(BugSpec, includes, excludes)),
-          }),
-          params,
-        );
-
-        return result.bugs.length ? result.bugs[0] : null;
-      },
-    );
-  }
-
-  public getBugs(ids: number[]): FilteredQuery<Bug[]> {
+  public getBugs(ids: (number | string)[]): FilteredQuery<Bug> {
     return this.searchBugs({
       id: ids.join(","),
     });
   }
 
-  public quicksearch(query: string): FilteredQuery<Bug[]> {
+  public quicksearch(query: string): FilteredQuery<Bug> {
     return this.searchBugs({
       quicksearch: query,
     });
@@ -115,7 +89,7 @@ export default class BugzillaAPI {
 
   public advancedSearch(
     query: string | URL | Record<string, string> | [string, string][] | URLSearchParams,
-  ): FilteredQuery<Bug[]> {
+  ): FilteredQuery<Bug> {
     if (query instanceof URL) {
       query = query.searchParams;
     } else if (typeof query == "string" && query.startsWith("http")) {
