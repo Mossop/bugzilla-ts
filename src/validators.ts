@@ -51,7 +51,7 @@ export function array<T>(validator: Validator<T>): Validator<T[]> {
     }
 
     if (!Array.isArray(val)) {
-      throw new Error(`Expected an array but received '${val}'`);
+      return [validator(val)];
     }
 
     try {

@@ -1,10 +1,12 @@
 import { URL, URLSearchParams } from "url";
 
+import type { DateTime } from "luxon";
+
 import type { BugzillaLink, SearchParams } from "./link";
 import { PublicLink, params, PasswordLink, ApiKeyLink } from "./link";
 import { FilteredQuery } from "./query";
-import type { Bug, Version, User } from "./types";
-import { BugSpec, UserSpec, VersionSpec } from "./types";
+import type { Bug, Version, User, History } from "./types";
+import { HistoryLookupSpec, BugSpec, UserSpec, VersionSpec } from "./types";
 import { array, object } from "./validators";
 
 export type { Bug };
@@ -47,6 +49,23 @@ export default class BugzillaAPI {
 
   public whoami(): Promise<User> {
     return this.link.get("whoami", object(UserSpec));
+  }
+
+  public async bugHistory(bugId: number | string, since?: DateTime): Promise<History[]> {
+    let params: URLSearchParams | undefined = undefined;
+
+    if (since) {
+      params = new URLSearchParams();
+      params.set("new_since", since.toISODate());
+    }
+
+    let bugs = await this.link.get(`bug/${bugId}/history`, object(HistoryLookupSpec), params);
+
+    if (bugs.bugs.length == 0) {
+      throw new Error("Bug not found.");
+    }
+
+    return bugs.bugs[0].history;
   }
 
   public searchBugs(

@@ -130,3 +130,49 @@ export const BugSpec = {
   version: string,
   whiteboard: string,
 };
+
+export interface Change {
+  field_name: string;
+  removed: string;
+  added: string;
+  attachment_id?: int;
+}
+
+export const ChangeSpec = {
+  field_name: string,
+  removed: string,
+  added: string,
+  attachment_id: optional(int),
+};
+
+export interface History {
+  when: datetime;
+  who: string;
+  changes: Change[];
+}
+
+export const HistorySpec = {
+  when: datetime,
+  who: string,
+  changes: array(object(ChangeSpec)),
+};
+
+export interface BugHistory {
+  id: int;
+  alias: string[];
+  history: History[];
+}
+
+export const BugHistorySpec = {
+  id: int,
+  alias: array(string),
+  history: array(object(HistorySpec)),
+};
+
+export interface HistoryLookup {
+  bugs: BugHistory[];
+}
+
+export const HistoryLookupSpec = {
+  bugs: array(object(BugHistorySpec)),
+};
