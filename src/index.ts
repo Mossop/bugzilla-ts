@@ -9,7 +9,7 @@ import type { Bug, Version, User, History } from "./types";
 import { HistoryLookupSpec, BugSpec, UserSpec, VersionSpec } from "./types";
 import { array, object } from "./validators";
 
-export type { Bug };
+export type { Bug, User, History, Change, Flag } from "./types";
 
 export default class BugzillaAPI {
   private readonly link: BugzillaLink;
