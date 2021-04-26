@@ -35,7 +35,7 @@ export interface Flag {
   modification_date: datetime;
   status: string;
   setter: string;
-  requestee: string;
+  requestee: string | undefined;
 }
 
 export const FlagSpec = {
@@ -46,7 +46,7 @@ export const FlagSpec = {
   modification_date: datetime,
   status: string,
   setter: string,
-  requestee: string,
+  requestee: optional(string),
 };
 
 export interface Bug {
