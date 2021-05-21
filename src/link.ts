@@ -23,7 +23,7 @@ export abstract class BugzillaLink {
   protected readonly instance: URL;
 
   public constructor(instance: URL) {
-    this.instance = new URL("/rest/", instance);
+    this.instance = new URL("rest/", instance);
   }
 
   protected abstract request(url: URL, options: RequestInit): Promise<Response>;
