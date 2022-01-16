@@ -94,6 +94,12 @@ export default class BugzillaAPI {
     );
   }
 
+  public getBug(id: number | string): FilteredQuery<Bug> {
+    return this.searchBugs({
+      id,
+    })[0];
+  }
+
   public getBugs(ids: (number | string)[]): FilteredQuery<Bug> {
     return this.searchBugs({
       id: ids.join(","),
