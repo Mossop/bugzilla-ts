@@ -30,14 +30,12 @@ await api.version();
 ## Retrieving bugs by ID
 
 ```javascript
-let bug = await api.getBug(123456);
-
 let bugs = await api.getBugs([123456, 123457]);
 ```
 
 ## Querying bugs
 
-You can use a quicksearch string:
+You can use a `quicksearch` string:
 
 ```javascript
 let bugs = await api.quicksearch("severity:blocker,critical");
@@ -68,10 +66,10 @@ that return bugs:
 
 ```javascript
 // To only retrieve certain fields.
-let bug = await api.getBug(123456).include(["id", "product", "component"]);
+let bug = await api.getBugs([123456]).include(["id", "product", "component"]);
 
 // Or to filter out certain fields.
-let bug = await api.getBug(123456).exclude(["cc_detail"]);
+let bug = await api.getBugs([123456]).exclude(["cc_detail"]);
 ```
 
 Assuming you use a static array the returned types will correctly reflect to available fields.
