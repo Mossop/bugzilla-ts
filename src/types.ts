@@ -83,7 +83,7 @@ export interface Bug {
   creator_detail: User;
   depends_on: number[];
   dupe_of: int | null;
-  flags: Flag[];
+  flags: Flag[] | undefined;
   groups: string[];
   id: int;
   is_cc_accessible: boolean;
@@ -124,7 +124,7 @@ export const BugSpec = {
   creator_detail: object(UserSpec),
   depends_on: array(int),
   dupe_of: nullable(int),
-  flags: array(object(FlagSpec)),
+  flags: optional(array(object(FlagSpec))),
   groups: array(string),
   id: int,
   is_cc_accessible: boolean,
