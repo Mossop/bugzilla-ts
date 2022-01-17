@@ -11,6 +11,7 @@ import {
   datetime,
   nullable,
   optional,
+  maybeArray,
 } from "./validators";
 
 type int = number;
@@ -76,7 +77,7 @@ export interface Bug {
   cc: string[];
   cc_detail: User[];
   classification: string;
-  component: string;
+  component: string | string[];
   creation_time: datetime;
   creator: string;
   creator_detail: User;
@@ -117,7 +118,7 @@ export const BugSpec = {
   cc: array(string),
   cc_detail: array(object(UserSpec)),
   classification: string,
-  component: string,
+  component: maybeArray(string),
   creation_time: datetime,
   creator: string,
   creator_detail: object(UserSpec),
