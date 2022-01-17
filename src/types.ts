@@ -16,6 +16,16 @@ import {
 type int = number;
 type datetime = DateTime;
 
+export interface LoginResponse {
+  id: int;
+  token: string;
+}
+
+export const LoginResponseSpec = {
+  id: int,
+  token: string,
+};
+
 export interface Version {
   version: string;
 }
@@ -25,7 +35,7 @@ export const VersionSpec = {
 };
 
 export interface User {
-  id: number;
+  id: int;
   name: string;
   real_name: string;
 }

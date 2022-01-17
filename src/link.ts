@@ -1,9 +1,8 @@
 import { URLSearchParams, URL } from "url";
 
-import type { RequestInit, Response } from "node-fetch";
-import fetch from "node-fetch";
-
-import type { Validator } from "./validators";
+import axios, { AxiosRequestConfig } from "axios";
+import { object, Validator } from "./validators";
+import { LoginResponse, LoginResponseSpec } from "./types";
 
 export type SearchParams =
   | Record<string, string>
@@ -29,6 +28,33 @@ function isError(payload: unknown): payload is ApiError {
   return payload && typeof payload == "object" && payload.error;
 }
 
+async function performRequest<T>(
+  config: AxiosRequestConfig,
+  validator: Validator<T>,
+): Promise<T> {
+  try {
+    let response = await axios.request({
+      ...config,
+      headers: {
+        Accept: "application/json",
+        ...(config.headers ?? {}),
+      },
+    });
+
+    if (isError(response.data)) {
+      throw new Error(response.data.message);
+    }
+
+    return validator(response.data);
+  } catch (e: unknown) {
+    if (axios.isAxiosError(e)) {
+      throw new Error(e.message);
+    } else {
+      throw e;
+    }
+  }
+}
+
 /**
  * Responsible for requesting data from the bugzilla instance handling any
  * necessary authentication and error handling that must happen. The chief
@@ -41,7 +67,10 @@ export abstract class BugzillaLink {
     this.instance = new URL("rest/", instance);
   }
 
-  protected abstract request(url: URL, options: RequestInit): Promise<Response>;
+  protected abstract request<T>(
+    config: AxiosRequestConfig,
+    validator: Validator<T>,
+  ): Promise<T>;
 
   protected buildURL(path: string, query?: SearchParams): URL {
     let url = new URL(path, this.instance);
@@ -51,37 +80,17 @@ export abstract class BugzillaLink {
     return url;
   }
 
-  protected async processResponse<T>(
-    response: Response,
-    validator: Validator<T>,
-  ): Promise<T> {
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-
-    let body = await response.json();
-    if (isError(body)) {
-      throw new Error(body.message);
-    }
-
-    return validator(body);
-  }
-
   public async get<T>(
     path: string,
     validator: Validator<T>,
     searchParams?: SearchParams,
   ): Promise<T> {
-    let response = await this.request(this.buildURL(path, searchParams), {
-      method: "GET",
-      redirect: "follow",
-      headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        Accept: "application/json",
+    return this.request(
+      {
+        url: this.buildURL(path, searchParams).toString(),
       },
-    });
-
-    return this.processResponse(response, validator);
+      validator,
+    );
   }
 
   public async post<R, T>(
@@ -90,25 +99,26 @@ export abstract class BugzillaLink {
     content: R,
     searchParams?: SearchParams,
   ): Promise<T> {
-    let response = await this.request(this.buildURL(path, searchParams), {
-      method: "POST",
-      body: JSON.stringify(content),
-      redirect: "follow",
-      headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        Accept: "application/json",
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        "Content-Type": "application/json",
+    return this.request(
+      {
+        url: this.buildURL(path, searchParams).toString(),
+        method: "POST",
+        data: JSON.stringify(content),
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    });
-
-    return this.processResponse(response, validator);
+      validator,
+    );
   }
 }
 
 export class PublicLink extends BugzillaLink {
-  protected async request(url: URL, options: RequestInit): Promise<Response> {
-    return fetch(url.toString(), options);
+  protected async request<T>(
+    config: AxiosRequestConfig,
+    validator: Validator<T>,
+  ): Promise<T> {
+    return performRequest(config, validator);
   }
 }
 
@@ -120,15 +130,20 @@ export class ApiKeyLink extends BugzillaLink {
     super(instance);
   }
 
-  protected async request(url: URL, options: RequestInit): Promise<Response> {
-    return fetch(url.toString(), {
-      ...options,
-      headers: {
-        ...(options.headers ?? {}),
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        "X-BUGZILLA-API-KEY": this.apiKey,
+  protected async request<T>(
+    config: AxiosRequestConfig,
+    validator: Validator<T>,
+  ): Promise<T> {
+    return performRequest(
+      {
+        ...config,
+        headers: {
+          ...(config.headers ?? {}),
+          "X-BUGZILLA-API-KEY": this.apiKey,
+        },
       },
-    });
+      validator,
+    );
   }
 }
 
@@ -136,7 +151,7 @@ export class ApiKeyLink extends BugzillaLink {
  * Handles authentication using a username and password.
  */
 export class PasswordLink extends BugzillaLink {
-  private token: string | null = "bad";
+  private token: string | null = null;
 
   public constructor(
     instance: URL,
@@ -147,50 +162,38 @@ export class PasswordLink extends BugzillaLink {
     super(instance);
   }
 
-  /* eslint-disable @typescript-eslint/naming-convention */
   private async login(): Promise<string> {
-    let response = await fetch(
-      this.buildURL("/rest/login", {
-        restrict_login: String(this.restrictLogin),
-      }).toString(),
+    let loginInfo = await performRequest<LoginResponse>(
       {
-        method: "GET",
-        redirect: "follow",
-        headers: {
-          Accept: "application/json",
-          "X-BUGZILLA-LOGIN": this.username,
-          "X-BUGZILLA-PASSWORD": this.password,
-        },
+        url: this.buildURL("login", {
+          login: this.username,
+          password: this.password,
+          restrict_login: String(this.restrictLogin),
+        }).toString(),
       },
+      object(LoginResponseSpec),
     );
 
-    if (!response.ok) {
-      let body = await response.json();
-      if (isError(body)) {
-        throw new Error(body.message);
-      } else {
-        throw new Error(response.statusText);
-      }
-    }
-
-    throw new Error("Block");
+    return loginInfo.token;
   }
-  /* eslint-enable @typescript-eslint/naming-convention */
 
-  protected async request(url: URL, options: RequestInit): Promise<Response> {
+  protected async request<T>(
+    config: AxiosRequestConfig,
+    validator: Validator<T>,
+  ): Promise<T> {
     if (!this.token) {
       this.token = await this.login();
     }
 
-    let response = await fetch(url.toString(), {
-      ...options,
-      headers: {
-        ...(options.headers ?? {}),
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        "X-BUGZILLA-TOKEN": this.token,
+    return performRequest(
+      {
+        ...config,
+        headers: {
+          ...(config.headers ?? {}),
+          "X-BUGZILLA-TOKEN": this.token,
+        },
       },
-    });
-
-    return response;
+      validator,
+    );
   }
 }
