@@ -30,7 +30,7 @@
   "homepage": "https://github.com/Mossop/bugzilla-ts#readme",
   "devDependencies": {
     "@types/luxon": "^1.26.0",
-    "@types/node": "^14.14.28",
+    "@types/node": "^17.0.9",
     "@types/node-fetch": "^2.5.8",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",
