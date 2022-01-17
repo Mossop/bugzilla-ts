@@ -106,7 +106,7 @@ export interface Bug {
   target_milestone: string;
   update_token?: string;
   url: string;
-  version: string;
+  version: string | string[];
   whiteboard: string;
 }
 
@@ -147,7 +147,7 @@ export const BugSpec = {
   target_milestone: string,
   update_token: optional(string),
   url: string,
-  version: string,
+  version: maybeArray(string),
   whiteboard: string,
 };
 
