@@ -14,6 +14,17 @@ export function params(search: SearchParams): URLSearchParams {
   return new URLSearchParams(search);
 }
 
+interface ApiError {
+  error: true;
+  message: string;
+}
+
+function isError(payload: unknown): payload is ApiError {
+  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return payload && typeof payload == "object" && payload.error;
+}
+
 /**
  * Responsible for requesting data from the bugzilla instance handling any
  * necessary authentication and error handling that must happen. The chief
@@ -42,7 +53,7 @@ export abstract class BugzillaLink {
     }
 
     let body = await response.json();
-    if (body.error) {
+    if (isError(body)) {
       throw new Error(body.message);
     }
 
@@ -96,7 +107,7 @@ export abstract class BugzillaLink {
 
 export class PublicLink extends BugzillaLink {
   protected async request(url: URL, options: RequestInit): Promise<Response> {
-    return fetch(url, options);
+    return fetch(url.toString(), options);
   }
 }
 
@@ -109,7 +120,7 @@ export class ApiKeyLink extends BugzillaLink {
   }
 
   protected async request(url: URL, options: RequestInit): Promise<Response> {
-    return fetch(url, {
+    return fetch(url.toString(), {
       ...options,
       headers: {
         ...options.headers ?? {},
@@ -140,7 +151,7 @@ export class PasswordLink extends BugzillaLink {
     let response = await fetch(
       this.buildURL("/rest/login", {
         restrict_login: String(this.restrictLogin),
-      }),
+      }).toString(),
       {
         method: "GET",
         redirect: "follow",
@@ -154,7 +165,11 @@ export class PasswordLink extends BugzillaLink {
 
     if (!response.ok) {
       let body = await response.json();
-      throw new Error(body.message);
+      if (isError(body)) {
+        throw new Error(body.message);
+      } else {
+        throw new Error(response.statusText);
+      }
     }
 
     throw new Error("Block");
@@ -166,7 +181,7 @@ export class PasswordLink extends BugzillaLink {
       this.token = await this.login();
     }
 
-    let response = await fetch(url, {
+    let response = await fetch(url.toString(), {
       ...options,
       headers: {
         ...options.headers ?? {},
