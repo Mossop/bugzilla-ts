@@ -34,7 +34,7 @@
     "@types/node-fetch": "^2.5.8",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",
-    "eslint": "^7.20.0",
+    "eslint": "^8.7.0",
     "eslint-import-resolver-ts": "^0.4.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-mossop": "github:Mossop/eslint-plugin-mossop#1.0.12",
