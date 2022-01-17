@@ -87,7 +87,10 @@ export const string = typedValidator<string>("string");
 
 export function nullable<T>(validator: Validator<T>): Validator<T | null>;
 export function nullable<T>(validator: Validator<T>, result: T): Validator<T>;
-export function nullable<T>(validator: Validator<T>, result?: T): Validator<T | null> {
+export function nullable<T>(
+  validator: Validator<T>,
+  result?: T,
+): Validator<T | null> {
   return (val: any): T | null => {
     if (val === null) {
       return result ?? null;
@@ -99,7 +102,10 @@ export function nullable<T>(validator: Validator<T>, result?: T): Validator<T | 
 
 export function optional<T>(validator: Validator<T>): Validator<T | undefined>;
 export function optional<T>(validator: Validator<T>, result: T): Validator<T>;
-export function optional<T>(validator: Validator<T>, result?: T): Validator<T | undefined> {
+export function optional<T>(
+  validator: Validator<T>,
+  result?: T,
+): Validator<T | undefined> {
   return (val: any): T | undefined => {
     if (val === undefined) {
       return result;

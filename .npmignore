@@ -1,2 +1,3 @@
-# Ignore the Github directory
 /.github
+/config
+/dist/tsconfig.build.tsbuildinfo

@@ -1,8 +1,17 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-
+/* eslint-disable @typescript-eslint/no-redeclare */
 import type { DateTime } from "luxon";
 
-import { int, string, array, object, boolean, datetime, nullable, optional } from "./validators";
+import {
+  int,
+  string,
+  array,
+  object,
+  boolean,
+  datetime,
+  nullable,
+  optional,
+} from "./validators";
 
 type int = number;
 type datetime = DateTime;

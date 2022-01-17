@@ -5,7 +5,11 @@ import fetch from "node-fetch";
 
 import type { Validator } from "./validators";
 
-export type SearchParams = Record<string, string> | [string, string][] | string | URLSearchParams;
+export type SearchParams =
+  | Record<string, string>
+  | [string, string][]
+  | string
+  | URLSearchParams;
 export function params(search: SearchParams): URLSearchParams {
   if (search instanceof URLSearchParams) {
     return search;
@@ -47,7 +51,10 @@ export abstract class BugzillaLink {
     return url;
   }
 
-  protected async processResponse<T>(response: Response, validator: Validator<T>): Promise<T> {
+  protected async processResponse<T>(
+    response: Response,
+    validator: Validator<T>,
+  ): Promise<T> {
     if (!response.ok) {
       throw new Error(response.statusText);
     }
@@ -63,19 +70,16 @@ export abstract class BugzillaLink {
   public async get<T>(
     path: string,
     validator: Validator<T>,
-    params?: SearchParams,
+    searchParams?: SearchParams,
   ): Promise<T> {
-    let response = await this.request(
-      this.buildURL(path, params),
-      {
-        method: "GET",
-        redirect: "follow",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          Accept: "application/json",
-        },
+    let response = await this.request(this.buildURL(path, searchParams), {
+      method: "GET",
+      redirect: "follow",
+      headers: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        Accept: "application/json",
       },
-    );
+    });
 
     return this.processResponse(response, validator);
   }
@@ -84,22 +88,19 @@ export abstract class BugzillaLink {
     path: string,
     validator: Validator<T>,
     content: R,
-    params?: SearchParams,
+    searchParams?: SearchParams,
   ): Promise<T> {
-    let response = await this.request(
-      this.buildURL(path, params),
-      {
-        method: "POST",
-        body: JSON.stringify(content),
-        redirect: "follow",
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          "Accept": "application/json",
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          "Content-Type": "application/json",
-        },
+    let response = await this.request(this.buildURL(path, searchParams), {
+      method: "POST",
+      body: JSON.stringify(content),
+      redirect: "follow",
+      headers: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        Accept: "application/json",
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        "Content-Type": "application/json",
       },
-    );
+    });
 
     return this.processResponse(response, validator);
   }
@@ -123,7 +124,7 @@ export class ApiKeyLink extends BugzillaLink {
     return fetch(url.toString(), {
       ...options,
       headers: {
-        ...options.headers ?? {},
+        ...(options.headers ?? {}),
         // eslint-disable-next-line @typescript-eslint/naming-convention
         "X-BUGZILLA-API-KEY": this.apiKey,
       },
@@ -156,7 +157,7 @@ export class PasswordLink extends BugzillaLink {
         method: "GET",
         redirect: "follow",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
           "X-BUGZILLA-LOGIN": this.username,
           "X-BUGZILLA-PASSWORD": this.password,
         },
@@ -184,13 +185,11 @@ export class PasswordLink extends BugzillaLink {
     let response = await fetch(url.toString(), {
       ...options,
       headers: {
-        ...options.headers ?? {},
+        ...(options.headers ?? {}),
         // eslint-disable-next-line @typescript-eslint/naming-convention
         "X-BUGZILLA-TOKEN": this.token,
       },
     });
-    console.log(response.ok, response.status, response.statusText);
-    console.log(await response.json());
 
     return response;
   }

@@ -11,8 +11,14 @@ abstract class Executable<T> implements Promisish<T> {
   }
 
   public then<TResult1 = T, TResult2 = never>(
-    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null,
-    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | undefined | null,
+    onfulfilled?:
+      | ((value: T) => TResult1 | PromiseLike<TResult1>)
+      | undefined
+      | null,
+    onrejected?:
+      | ((reason: unknown) => TResult2 | PromiseLike<TResult2>)
+      | undefined
+      | null,
   ): Promise<TResult1 | TResult2> {
     if (!this.promise) {
       this.promise = this.execute();
@@ -22,7 +28,10 @@ abstract class Executable<T> implements Promisish<T> {
   }
 
   public catch<TResult = never>(
-    onrejected?: ((reason: unknown) => TResult | PromiseLike<TResult>) | undefined | null,
+    onrejected?:
+      | ((reason: unknown) => TResult | PromiseLike<TResult>)
+      | undefined
+      | null,
   ): Promise<T | TResult> {
     return this.then(undefined, onrejected);
   }
@@ -33,8 +42,11 @@ abstract class Executable<T> implements Promisish<T> {
 }
 
 type Keys<T> = keyof T & string;
-type Filtered<T, I extends keyof T, E extends keyof T> =
-  T extends null | undefined ? T : Omit<Pick<T, I>, E>;
+type Filtered<T, I extends keyof T, E extends keyof T> = T extends
+  | null
+  | undefined
+  ? T
+  : Omit<Pick<T, I>, E>;
 
 type FilterExec<T, I extends keyof T, E extends keyof T> = (
   includes: Keys<T>[] | undefined,
@@ -47,6 +59,7 @@ export class FilteredQuery<
   E extends keyof T = never,
 > extends Executable<Filtered<T, I, E>[]> {
   private includes: Keys<T>[] | undefined;
+
   private excludes: Keys<T>[] | undefined;
 
   public constructor(private readonly exec: FilterExec<T, I, E>) {
@@ -57,12 +70,16 @@ export class FilteredQuery<
     return this.exec(this.includes, this.excludes);
   }
 
-  public include<NI extends Keys<T>>(includes: NI[] | null): FilteredQuery<T, NI, E> {
+  public include<NI extends Keys<T>>(
+    includes: NI[] | null,
+  ): FilteredQuery<T, NI, E> {
     this.includes = includes ?? undefined;
     return this as unknown as FilteredQuery<T, NI, E>;
   }
 
-  public exclude<NE extends Keys<T>>(excludes: NE[] | null): FilteredQuery<T, I, NE> {
+  public exclude<NE extends Keys<T>>(
+    excludes: NE[] | null,
+  ): FilteredQuery<T, I, NE> {
     this.excludes = excludes ?? undefined;
     return this as unknown as FilteredQuery<T, I, NE>;
   }

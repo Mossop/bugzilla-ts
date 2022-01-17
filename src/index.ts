@@ -28,16 +28,14 @@ export default class BugzillaAPI {
     password?: string,
     restrictLogin: boolean = false,
   ) {
-    if (!(instance instanceof URL)) {
-      instance = new URL(instance);
-    }
+    let url = instance instanceof URL ? instance : new URL(instance);
 
     if (!user) {
-      this.link = new PublicLink(instance);
+      this.link = new PublicLink(url);
     } else if (password !== undefined) {
-      this.link = new PasswordLink(instance, user, password, restrictLogin);
+      this.link = new PasswordLink(url, user, password, restrictLogin);
     } else {
-      this.link = new ApiKeyLink(instance, user);
+      this.link = new ApiKeyLink(url, user);
     }
   }
 
@@ -51,15 +49,22 @@ export default class BugzillaAPI {
     return this.link.get("whoami", object(UserSpec));
   }
 
-  public async bugHistory(bugId: number | string, since?: DateTime): Promise<History[]> {
-    let params: URLSearchParams | undefined = undefined;
+  public async bugHistory(
+    bugId: number | string,
+    since?: DateTime,
+  ): Promise<History[]> {
+    let searchParams: URLSearchParams | undefined;
 
     if (since) {
-      params = new URLSearchParams();
-      params.set("new_since", since.toISODate());
+      searchParams = new URLSearchParams();
+      searchParams.set("new_since", since.toISODate());
     }
 
-    let bugs = await this.link.get(`bug/${bugId}/history`, object(HistoryLookupSpec), params);
+    let bugs = await this.link.get(
+      `bug/${bugId}/history`,
+      object(HistoryLookupSpec),
+      searchParams,
+    );
 
     if (bugs.bugs.length == 0) {
       throw new Error("Bug not found.");
@@ -68,11 +73,12 @@ export default class BugzillaAPI {
     return bugs.bugs[0].history;
   }
 
-  public searchBugs(
-    query: SearchParams,
-  ): FilteredQuery<Bug> {
+  public searchBugs(query: SearchParams): FilteredQuery<Bug> {
     return new FilteredQuery(
-      async (includes: string[] | undefined, excludes: string[] | undefined): Promise<Bug[]> => {
+      async (
+        includes: string[] | undefined,
+        excludes: string[] | undefined,
+      ): Promise<Bug[]> => {
         let search = params(query);
         if (includes) {
           search.set("include_fields", includes.join(","));
@@ -107,20 +113,27 @@ export default class BugzillaAPI {
   }
 
   public advancedSearch(
-    query: string | URL | Record<string, string> | [string, string][] | URLSearchParams,
+    query:
+      | string
+      | URL
+      | Record<string, string>
+      | [string, string][]
+      | URLSearchParams,
   ): FilteredQuery<Bug> {
+    let searchParams: URLSearchParams;
+
     if (query instanceof URL) {
-      query = query.searchParams;
+      searchParams = query.searchParams;
     } else if (typeof query == "string" && query.startsWith("http")) {
-      query = new URL(query).searchParams;
+      searchParams = new URL(query).searchParams;
+    } else if (query instanceof URLSearchParams) {
+      searchParams = query;
+    } else {
+      searchParams = new URLSearchParams(query);
     }
 
-    if (!(query instanceof URLSearchParams)) {
-      query = new URLSearchParams(query);
-    }
+    searchParams.delete("list_id");
 
-    query.delete("list_id");
-
-    return this.searchBugs(query);
+    return this.searchBugs(searchParams);
   }
 }

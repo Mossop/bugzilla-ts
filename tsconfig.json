@@ -1,28 +1,7 @@
 {
+  "extends": "./config/tsconfig.base.json",
   "compilerOptions": {
-    "lib": [
-      "ESNext"
-    ],
-    "target": "es2019",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "declarationMap": false,
-    "esModuleInterop": true,
-    "noEmitOnError": true,
-
-    "noImplicitAny": false,
-    "noImplicitThis": true,
-    "strictPropertyInitialization": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-
-    "allowJs": true,
-    "noEmit": true,
+    "allowJs": true
   },
-  "include": [
-    "src/**/*.ts",
-    "*.js",
-    ".*.js"
-  ]
+  "include": ["**/*.ts", "**/*.js", ".*.js"]
 }
