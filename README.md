@@ -1,4 +1,4 @@
-# Bugzilla | [![Build](https://github.com/Mossop/bugzilla-ts/actions/workflows/build.yml/badge.svg)]
+# Bugzilla | [![Build](https://github.com/Mossop/bugzilla-ts/actions/workflows/build.yml/badge.svg)](https://github.com/Mossop/bugzilla-ts/actions/workflows/build.yml)
 
 Typesafe access to [Bugzilla's REST API](https://bugzilla.readthedocs.io/en/latest/api/index.html).
 
