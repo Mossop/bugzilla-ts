@@ -1,3 +1,5 @@
+import { Settings } from "luxon";
+
 import {
   boolean,
   int,
@@ -10,6 +12,9 @@ import {
   array,
   maybeArray,
 } from "./validators";
+
+// Force all times to UTC.
+Settings.defaultZone = "UTC";
 
 test("boolean", () => {
   expect(boolean(false)).toBe(false);
@@ -148,7 +153,7 @@ test("nullable", () => {
 
 test("datetime", () => {
   expect(datetime("2022-01-12T05:43:27Z").toISO()).toBe(
-    "2022-01-12T05:43:27.000+00:00",
+    "2022-01-12T05:43:27.000Z",
   );
 
   expect(() => datetime(5)).toThrowErrorMatchingInlineSnapshot(

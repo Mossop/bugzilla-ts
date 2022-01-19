@@ -1,4 +1,9 @@
+import { Settings } from "luxon";
+
 import BugzillaAPI from ".";
+
+// Force all times to UTC.
+Settings.defaultZone = "UTC";
 
 // Tests that rely on the network are not ideal but it's hard to otherwise
 // verify that we can parse data from the real services.

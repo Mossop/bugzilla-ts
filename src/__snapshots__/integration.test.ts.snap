@@ -73,7 +73,7 @@ Array [
     ],
     "classification": "Components",
     "component": "Add-ons Manager",
-    "creation_time": "2011-03-28T16:09:57.000+01:00",
+    "creation_time": "2011-03-28T15:09:57.000Z",
     "creator": "moz_bug_r_a4@yahoo.com",
     "creator_detail": Object {
       "id": 194398,
@@ -84,9 +84,9 @@ Array [
     "dupe_of": null,
     "flags": Array [
       Object {
-        "creation_date": "2011-04-08T18:36:47.000+01:00",
+        "creation_date": "2011-04-08T17:36:47.000Z",
         "id": 438288,
-        "modification_date": "2011-04-08T18:36:47.000+01:00",
+        "modification_date": "2011-04-08T17:36:47.000Z",
         "name": "in-testsuite",
         "requestee": undefined,
         "setter": "dtownsend@mozilla.com",
@@ -94,9 +94,9 @@ Array [
         "type_id": 37,
       },
       Object {
-        "creation_date": "2011-04-08T18:36:47.000+01:00",
+        "creation_date": "2011-04-08T17:36:47.000Z",
         "id": 438289,
-        "modification_date": "2011-04-08T18:36:47.000+01:00",
+        "modification_date": "2011-04-08T17:36:47.000Z",
         "name": "in-litmus",
         "requestee": undefined,
         "setter": "dtownsend@mozilla.com",
@@ -111,7 +111,7 @@ Array [
     "is_creator_accessible": true,
     "is_open": false,
     "keywords": Array [],
-    "last_change_time": "2011-07-12T16:24:11.000+01:00",
+    "last_change_time": "2011-07-12T15:24:11.000Z",
     "op_sys": "All",
     "platform": "All",
     "priority": "--",
@@ -170,7 +170,7 @@ Array [
     ],
     "classification": "Developer Infrastructure",
     "component": "Bootstrap Configuration",
-    "creation_time": "2021-12-01T15:10:39.000+00:00",
+    "creation_time": "2021-12-01T15:10:39.000Z",
     "creator": "dtownsend@mozilla.com",
     "creator_detail": Object {
       "id": 91159,
@@ -187,7 +187,7 @@ Array [
     "is_creator_accessible": true,
     "is_open": false,
     "keywords": Array [],
-    "last_change_time": "2021-12-19T05:13:35.000+00:00",
+    "last_change_time": "2021-12-19T05:13:35.000Z",
     "op_sys": "Unspecified",
     "platform": "Unspecified",
     "priority": "--",
@@ -832,7 +832,7 @@ Array [
     ],
     "classification": "Components",
     "component": "Networking",
-    "creation_time": "2022-01-13T08:18:19.000+00:00",
+    "creation_time": "2022-01-13T08:18:19.000Z",
     "creator": "jan.steffens@gmail.com",
     "creator_detail": Object {
       "id": 409128,
@@ -849,7 +849,7 @@ Array [
     "is_creator_accessible": true,
     "is_open": false,
     "keywords": Array [],
-    "last_change_time": "2022-01-14T13:41:21.000+00:00",
+    "last_change_time": "2022-01-14T13:41:21.000Z",
     "op_sys": "All",
     "platform": "Desktop",
     "priority": "--",
@@ -911,7 +911,7 @@ Array [
     "component": Array [
       "tito",
     ],
-    "creation_time": "2015-03-25T17:22:52.000+00:00",
+    "creation_time": "2015-03-25T17:22:52.000Z",
     "creator": "Radek Holy",
     "creator_detail": Object {
       "id": 357071,
@@ -928,7 +928,7 @@ Array [
     "is_creator_accessible": true,
     "is_open": true,
     "keywords": Array [],
-    "last_change_time": "2015-10-06T03:15:04.000+01:00",
+    "last_change_time": "2015-10-06T02:15:04.000Z",
     "op_sys": "Unspecified",
     "platform": "Unspecified",
     "priority": "unspecified",
@@ -999,7 +999,7 @@ Array [
     "component": Array [
       "tidy",
     ],
-    "creation_time": "2019-09-06T19:09:29.000+01:00",
+    "creation_time": "2019-09-06T18:09:29.000Z",
     "creator": "Breno",
     "creator_detail": Object {
       "id": 432500,
@@ -1016,7 +1016,7 @@ Array [
     "is_creator_accessible": true,
     "is_open": false,
     "keywords": Array [],
-    "last_change_time": "2019-10-21T16:52:06.000+01:00",
+    "last_change_time": "2019-10-21T15:52:06.000Z",
     "op_sys": "Unspecified",
     "platform": "Unspecified",
     "priority": "unspecified",
@@ -1055,7 +1055,7 @@ Array [
     "component": Array [
       "User Interface",
     ],
-    "creation_time": "2021-03-30T00:30:24.000+01:00",
+    "creation_time": "2021-03-29T23:30:24.000Z",
     "creator": "Jeff Fearn 🐞",
     "creator_detail": Object {
       "id": 193645,
@@ -1072,7 +1072,7 @@ Array [
     "is_creator_accessible": true,
     "is_open": false,
     "keywords": Array [],
-    "last_change_time": "2021-11-03T00:10:53.000+00:00",
+    "last_change_time": "2021-11-03T00:10:53.000Z",
     "op_sys": "Unspecified",
     "platform": "Unspecified",
     "priority": "unspecified",
