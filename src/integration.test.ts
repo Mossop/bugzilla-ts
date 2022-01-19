@@ -20,6 +20,6 @@ test("Red Hat", async () => {
   let api = new BugzillaAPI("https://bugzilla.redhat.com/");
 
   await expect(
-    api.getBugs([1944441, 1749908, 1205830]),
+    api.getBugs([1944441, 1749908, 1205830, 1906064, 1730084]),
   ).resolves.toMatchSnapshot();
 });
