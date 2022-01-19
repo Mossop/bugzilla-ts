@@ -11,6 +11,7 @@ import {
   datetime,
   nullable,
   optional,
+  maybeArray,
 } from "./validators";
 
 type int = number;
@@ -76,13 +77,13 @@ export interface Bug {
   cc: string[];
   cc_detail: User[];
   classification: string;
-  component: string;
+  component: string | string[];
   creation_time: datetime;
   creator: string;
   creator_detail: User;
   depends_on: number[];
   dupe_of: int | null;
-  flags: Flag[];
+  flags: Flag[] | undefined;
   groups: string[];
   id: int;
   is_cc_accessible: boolean;
@@ -105,7 +106,7 @@ export interface Bug {
   target_milestone: string;
   update_token?: string;
   url: string;
-  version: string;
+  version: string | string[];
   whiteboard: string;
 }
 
@@ -117,13 +118,13 @@ export const BugSpec = {
   cc: array(string),
   cc_detail: array(object(UserSpec)),
   classification: string,
-  component: string,
+  component: maybeArray(string),
   creation_time: datetime,
   creator: string,
   creator_detail: object(UserSpec),
   depends_on: array(int),
   dupe_of: nullable(int),
-  flags: array(object(FlagSpec)),
+  flags: optional(array(object(FlagSpec))),
   groups: array(string),
   id: int,
   is_cc_accessible: boolean,
@@ -146,7 +147,7 @@ export const BugSpec = {
   target_milestone: string,
   update_token: optional(string),
   url: string,
-  version: string,
+  version: maybeArray(string),
   whiteboard: string,
 };
 

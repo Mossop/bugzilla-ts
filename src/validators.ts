@@ -114,3 +114,13 @@ export function optional<T>(
     return validator(val);
   };
 }
+
+export function maybeArray<T>(validator: Validator<T>): Validator<T | T[]> {
+  return (val: any): T | T[] => {
+    if (Array.isArray(val)) {
+      return val.map((item) => validator(item));
+    }
+
+    return validator(val);
+  };
+}
