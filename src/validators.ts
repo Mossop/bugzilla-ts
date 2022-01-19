@@ -1,23 +1,23 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-
 import { DateTime } from "luxon";
 
 export type Validator<T> = (val: any) => T;
 
-type ObjectValidator<T> = {
+export type ObjectSpec<T> = {
   [K in keyof T]: Validator<T[K]>;
 };
 
+function repr(val: any): string {
+  return `\`${JSON.stringify(val)}\``;
+}
+
 export function object<T>(
-  validator: ObjectValidator<T>,
+  validator: ObjectSpec<T>,
   includes: string[] = Object.keys(validator),
   excludes: string[] = [],
 ): Validator<T> {
   return (val: any): T => {
     if (!val || typeof val != "object") {
-      throw new Error(`Expected an object but received '${val}'`);
+      throw new Error(`Expected an object but received ${repr(val)}`);
     }
 
     let result: any = {};
@@ -45,13 +45,8 @@ export function object<T>(
 
 export function array<T>(validator: Validator<T>): Validator<T[]> {
   return (val: any): T[] => {
-    // Empty arrays are returned as null.
-    if (val === null) {
-      return [];
-    }
-
     if (!Array.isArray(val)) {
-      return [validator(val)];
+      throw new Error(`Expected an array but received ${repr(val)}`);
     }
 
     try {
@@ -65,7 +60,7 @@ export function array<T>(validator: Validator<T>): Validator<T[]> {
 function typedValidator<T>(type: string): Validator<T> {
   return (val: any): T => {
     if (val === null || typeof val != type) {
-      throw new Error(`Expected a ${type} but received '${val}'`);
+      throw new Error(`Expected a ${type} but received ${repr(val)}`);
     }
 
     return val;
@@ -74,10 +69,15 @@ function typedValidator<T>(type: string): Validator<T> {
 
 export function datetime(val: any): DateTime {
   if (typeof val != "string") {
-    throw new Error(`Expected a string but received '${val}'`);
+    throw new Error(`Expected an ISO-8601 string but received ${repr(val)}`);
   }
 
-  return DateTime.fromISO(val);
+  let dt = DateTime.fromISO(val);
+  if (!dt.isValid) {
+    throw new Error(`Expected an ISO-8601 string but received ${repr(val)}`);
+  }
+
+  return dt;
 }
 
 export const boolean = typedValidator<boolean>("boolean");
@@ -118,7 +118,11 @@ export function optional<T>(
 export function maybeArray<T>(validator: Validator<T>): Validator<T | T[]> {
   return (val: any): T | T[] => {
     if (Array.isArray(val)) {
-      return val.map((item) => validator(item));
+      try {
+        return val.map(validator);
+      } catch (e) {
+        throw new Error(`Error validating array: ${e.message}`);
+      }
     }
 
     return validator(val);

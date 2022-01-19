@@ -12,6 +12,7 @@ import {
   nullable,
   optional,
   maybeArray,
+  ObjectSpec,
 } from "./validators";
 
 type int = number;
@@ -22,7 +23,7 @@ export interface LoginResponse {
   token: string;
 }
 
-export const LoginResponseSpec = {
+export const LoginResponseSpec: ObjectSpec<LoginResponse> = {
   id: int,
   token: string,
 };
@@ -31,7 +32,7 @@ export interface Version {
   version: string;
 }
 
-export const VersionSpec = {
+export const VersionSpec: ObjectSpec<Version> = {
   version: string,
 };
 
@@ -41,7 +42,7 @@ export interface User {
   real_name: string;
 }
 
-export const UserSpec = {
+export const UserSpec: ObjectSpec<User> = {
   id: int,
   name: string,
   real_name: string,
@@ -58,7 +59,7 @@ export interface Flag {
   requestee: string | undefined;
 }
 
-export const FlagSpec = {
+export const FlagSpec: ObjectSpec<Flag> = {
   id: int,
   name: string,
   type_id: int,
@@ -70,7 +71,7 @@ export const FlagSpec = {
 };
 
 export interface Bug {
-  alias: string[];
+  alias: string | string[];
   assigned_to: string;
   assigned_to_detail: User;
   blocks: number[];
@@ -97,7 +98,7 @@ export interface Bug {
   priority: string;
   product: string;
   qa_contact: string;
-  qa_contact_detail?: User[];
+  qa_contact_detail?: User;
   resolution: string;
   see_also: string[];
   severity: string;
@@ -110,8 +111,8 @@ export interface Bug {
   whiteboard: string;
 }
 
-export const BugSpec = {
-  alias: array(string),
+export const BugSpec: ObjectSpec<Bug> = {
+  alias: nullable(maybeArray(string), []),
   assigned_to: string,
   assigned_to_detail: object(UserSpec),
   blocks: array(int),
@@ -138,7 +139,7 @@ export const BugSpec = {
   priority: string,
   product: string,
   qa_contact: string,
-  qa_contact_detail: optional(array(object(UserSpec))),
+  qa_contact_detail: optional(object(UserSpec)),
   resolution: string,
   see_also: array(string),
   severity: string,
@@ -158,7 +159,7 @@ export interface Change {
   attachment_id?: int;
 }
 
-export const ChangeSpec = {
+export const ChangeSpec: ObjectSpec<Change> = {
   field_name: string,
   removed: string,
   added: string,
@@ -171,7 +172,7 @@ export interface History {
   changes: Change[];
 }
 
-export const HistorySpec = {
+export const HistorySpec: ObjectSpec<History> = {
   when: datetime,
   who: string,
   changes: array(object(ChangeSpec)),
@@ -183,7 +184,7 @@ export interface BugHistory {
   history: History[];
 }
 
-export const BugHistorySpec = {
+export const BugHistorySpec: ObjectSpec<BugHistory> = {
   id: int,
   alias: array(string),
   history: array(object(HistorySpec)),
@@ -193,6 +194,6 @@ export interface HistoryLookup {
   bugs: BugHistory[];
 }
 
-export const HistoryLookupSpec = {
+export const HistoryLookupSpec: ObjectSpec<HistoryLookup> = {
   bugs: array(object(BugHistorySpec)),
 };

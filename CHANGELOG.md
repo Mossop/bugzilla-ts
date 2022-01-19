@@ -2,6 +2,7 @@
 
 # [Next](https://github.com/Mossop/bugzilla-ts/compare/v1.1.6...main)
 
+- Fixed date/time validation.
 - Added support for Red Hat Bugzilla.
 - Documentation fixes.
 - Added basic automated tests.
