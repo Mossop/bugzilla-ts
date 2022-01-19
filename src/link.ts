@@ -2,7 +2,7 @@ import { URLSearchParams, URL } from "url";
 
 import axios, { AxiosRequestConfig } from "axios";
 import { object, Validator } from "./validators";
-import { LoginResponse, LoginResponseSpec } from "./types";
+import { LoginResponseSpec } from "./types";
 
 export type SearchParams =
   | Record<string, string>
@@ -163,7 +163,7 @@ export class PasswordLink extends BugzillaLink {
   }
 
   private async login(): Promise<string> {
-    let loginInfo = await performRequest<LoginResponse>(
+    let loginInfo = await performRequest(
       {
         url: this.buildURL("login", {
           login: this.username,

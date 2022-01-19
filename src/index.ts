@@ -5,7 +5,7 @@ import type { DateTime } from "luxon";
 import type { BugzillaLink, SearchParams } from "./link";
 import { PublicLink, params, PasswordLink, ApiKeyLink } from "./link";
 import { FilteredQuery } from "./query";
-import type { Bug, Version, User, History } from "./types";
+import type { Bug, User, History } from "./types";
 import { HistoryLookupSpec, BugSpec, UserSpec, VersionSpec } from "./types";
 import { array, object } from "./validators";
 
@@ -40,7 +40,7 @@ export default class BugzillaAPI {
   }
 
   public async version(): Promise<string> {
-    let version: Version = await this.link.get("version", object(VersionSpec));
+    let version = await this.link.get("version", object(VersionSpec));
 
     return version.version;
   }
