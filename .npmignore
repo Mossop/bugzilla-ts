@@ -1,4 +1,9 @@
 /.github
 /config
-/dist/tsconfig.build.tsbuildinfo
 /scripts
+/jest.config.js
+/tsconfig.*
+*.tsbuildinfo
+*.test.*
+*.snap
+.*
