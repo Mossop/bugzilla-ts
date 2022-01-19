@@ -4,6 +4,7 @@ module.exports = {
     eqeqeq: "off",
     "max-classes-per-file": "off",
     "no-continue": "off",
+    "no-plusplus": "off",
     "no-restricted-syntax": [
       "error",
       {
