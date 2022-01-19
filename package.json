@@ -10,7 +10,9 @@
     "lint": "eslint . && prettier --check .",
     "prettier": "prettier --write .",
     "test": "jest",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "version": "node scripts/version.js",
+    "postversion": "node scripts/post-version.js && git add CHANGELOG.md && git commit -m 'Update CHANGELOG.md'"
   },
   "repository": {
     "type": "git",
