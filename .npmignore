@@ -3,7 +3,7 @@
 /scripts
 /jest.config.js
 /tsconfig.*
+/test
+
 *.tsbuildinfo
-*.test.*
-*.snap
 .*

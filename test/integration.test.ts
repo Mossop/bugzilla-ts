@@ -1,6 +1,6 @@
 import { Settings } from "luxon";
 
-import BugzillaAPI from ".";
+import BugzillaAPI from "../src";
 
 // Force all times to UTC.
 Settings.defaultZone = "UTC";

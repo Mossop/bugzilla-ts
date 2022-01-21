@@ -11,7 +11,7 @@ import {
   object,
   array,
   maybeArray,
-} from "./validators";
+} from "../src/validators";
 
 // Force all times to UTC.
 Settings.defaultZone = "UTC";
