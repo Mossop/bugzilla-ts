@@ -2,8 +2,8 @@ import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { URL } from "url";
 
-import { PublicLink, ApiKeyLink, PasswordLink } from "./link";
-import { int, object, string } from "./validators";
+import { PublicLink, ApiKeyLink, PasswordLink } from "../src/link";
+import { int, object, string } from "../src/validators";
 
 const server = setupServer();
 
