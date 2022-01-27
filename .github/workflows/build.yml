@@ -1,4 +1,4 @@
-name: Build test
+name: Build and Coverage
 
 on:
   push:
@@ -38,3 +38,7 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Codecov
+        if: ${{ matrix.node-version == '17.x' }}
+        uses: codecov/codecov-action@v2

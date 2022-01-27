@@ -9,7 +9,7 @@
     "build": "tsc -b tsconfig.build.json",
     "lint": "eslint . && prettier --check .",
     "prettier": "prettier --write .",
-    "test": "jest",
+    "test": "jest --coverage",
     "prepack": "npm run build",
     "version": "node scripts/version.js",
     "postversion": "node scripts/post-version.js && git add CHANGELOG.md && git commit -m 'Update CHANGELOG.md'"
