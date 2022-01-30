@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 
 export type Validator<T> = (val: any) => T;
 
-export type ObjectSpec<T> = {
+export type ObjectSpec<T> = Record<string, Validator<any>> & {
   [K in keyof T]: Validator<T[K]>;
 };
 
@@ -27,11 +27,12 @@ export function object<T>(
         continue;
       }
 
-      if (!(field in validator)) {
+      let fieldValidator = validator[field];
+
+      if (!fieldValidator) {
         continue;
       }
 
-      let fieldValidator: Validator<any> = validator[field];
       try {
         result[field] = fieldValidator(val[field]);
       } catch (e) {

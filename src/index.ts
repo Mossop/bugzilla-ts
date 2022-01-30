@@ -66,11 +66,12 @@ export default class BugzillaAPI {
       searchParams,
     );
 
-    if (bugs.bugs.length == 0) {
+    let [bug] = bugs.bugs;
+    if (!bug) {
       throw new Error("Bug not found.");
     }
 
-    return bugs.bugs[0].history;
+    return bug.history;
   }
 
   public searchBugs(query: SearchParams): FilteredQuery<Bug> {

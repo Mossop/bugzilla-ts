@@ -1,4 +1,11 @@
-import { rest } from "msw";
+import {
+  DefaultRequestBody,
+  PathParams,
+  ResponseComposition,
+  rest,
+  RestContext,
+  RestRequest,
+} from "msw";
 import { setupServer } from "msw/node";
 import { URL } from "url";
 
@@ -11,16 +18,35 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
+function callArgs<A extends any[]>(
+  fn: jest.Mock<unknown, A>,
+  call: number = 0,
+): A {
+  let args = fn.mock.calls[call];
+  if (args === undefined) {
+    throw new Error(
+      "Mock function was not called the expected number of times.",
+    );
+  }
+
+  return args;
+}
+
 test("PublicLink", async () => {
   let link = new PublicLink(new URL("http://bugzilla.test.org/test/"));
 
-  let responseHandler = jest.fn((req, res, ctx) =>
-    res(
-      ctx.json({
-        foo: "Bar",
-        length: 38,
-      }),
-    ),
+  let responseHandler = jest.fn(
+    (
+      req: RestRequest<never, PathParams>,
+      res: ResponseComposition<DefaultRequestBody>,
+      ctx: RestContext,
+    ) =>
+      res(
+        ctx.json({
+          foo: "Bar",
+          length: 38,
+        }),
+      ),
   );
 
   server.use(
@@ -40,7 +66,7 @@ test("PublicLink", async () => {
   });
 
   expect(responseHandler).toHaveBeenCalledTimes(1);
-  let [[{ url, method, headers }]] = responseHandler.mock.calls;
+  let [{ url, method, headers }] = callArgs(responseHandler);
   expect(method).toBe("GET");
   expect(url.href).toBe("http://bugzilla.test.org/test/rest/foo");
   expect(headers.get("Accept")).toBe("application/json");
@@ -78,7 +104,7 @@ test("ApiKeyLink", async () => {
   });
 
   expect(responseHandler).toHaveBeenCalledTimes(1);
-  let [[{ url, method, headers }]] = responseHandler.mock.calls;
+  let [{ url, method, headers }] = callArgs(responseHandler);
   expect(method).toBe("GET");
   expect(url.href).toBe("http://bugzilla.test.org/test/rest/foo");
   expect(headers.get("Accept")).toBe("application/json");
@@ -132,14 +158,14 @@ test("PasswordLink", async () => {
   });
 
   expect(loginHandler).toHaveBeenCalledTimes(1);
-  let [[{ url, method, headers }]] = loginHandler.mock.calls;
+  let [{ url, method, headers }] = callArgs(loginHandler);
   expect(method).toBe("GET");
   expect(url.href).toBe(
     "http://bugzilla.test.org/test/rest/login?login=my-name&password=my-password&restrict_login=true",
   );
 
   expect(responseHandler).toHaveBeenCalledTimes(1);
-  [[{ url, method, headers }]] = responseHandler.mock.calls;
+  [{ url, method, headers }] = callArgs(responseHandler);
   expect(method).toBe("GET");
   expect(url.href).toBe("http://bugzilla.test.org/test/rest/foo");
   expect(headers.get("Accept")).toBe("application/json");
@@ -152,7 +178,7 @@ test("PasswordLink", async () => {
   expect(loginHandler).toHaveBeenCalledTimes(0);
 
   expect(responseHandler).toHaveBeenCalledTimes(1);
-  [[{ url, method, headers }]] = responseHandler.mock.calls;
+  [{ url, method, headers }] = callArgs(responseHandler);
   expect(method).toBe("GET");
   expect(url.href).toBe("http://bugzilla.test.org/test/rest/foo");
   expect(headers.get("Accept")).toBe("application/json");

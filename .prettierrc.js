@@ -1,1 +1,1 @@
-module.exports = require("./config/prettierrc");
+module.exports = "@mossop/config/node-ts/prettier";

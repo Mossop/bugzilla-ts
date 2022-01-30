@@ -4,11 +4,7 @@ module.exports = {
     project: ["./tsconfig.json"],
   },
 
-  env: {
-    node: true,
-  },
-
   ignorePatterns: ["node_modules", "dist"],
 
-  extends: ["./config/eslint-typescript"],
+  extends: [require.resolve("@mossop/config/node-ts/eslintrc")],
 };
