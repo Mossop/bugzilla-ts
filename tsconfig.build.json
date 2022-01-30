@@ -1,8 +1,7 @@
 {
-  "extends": "./config/tsconfig.base.json",
+  "extends": "@mossop/config/node-ts/tsconfig.build.json",
   "compilerOptions": {
     "module": "CommonJS",
-    "noEmit": false,
     "outDir": "dist"
   },
   "include": ["src/**/*.ts"]
