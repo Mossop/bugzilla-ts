@@ -86,3 +86,32 @@ Currently the `_all`, `_default`, `_extra` and `_custom` special field shortcuts
 supported.
 
 Custom fields are not currently returned.
+
+## Retrieving comments by ID
+
+```javascript
+// .getComment() accepts one parameter, ID of comment, as number
+let comment = await api.getComment(123456);
+```
+
+Return value is Comment object.
+
+## Retrieving all comments of bug
+
+```javascript
+// .getComments() accepts one parameter, ID of bug, as number
+let comments = await api.getBugComments(123456);
+```
+
+Return value is array of Comment objects.
+
+## Creating comments
+
+```javascript
+let comment = await api.createComment(123456, {
+  comment: "This is new comment on bug #123456",
+  options: { is_private: false },
+});
+```
+
+Returned value is ID of the newly-created comment.

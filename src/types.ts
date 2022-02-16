@@ -13,6 +13,8 @@ import {
   optional,
   maybeArray,
   ObjectSpec,
+  intString,
+  map,
 } from "./validators";
 
 type int = number;
@@ -196,4 +198,66 @@ export interface HistoryLookup {
 
 export const HistoryLookupSpec: ObjectSpec<HistoryLookup> = {
   bugs: array(object(BugHistorySpec)),
+};
+
+export interface Comment {
+  attachment_id?: int | null;
+  bug_id: int;
+  count: int;
+  creation_time: datetime;
+  creator: string;
+  id: int;
+  is_private: boolean;
+  tags: string[];
+  time: datetime;
+  text: string;
+}
+
+export const CommentSpec: ObjectSpec<Comment> = {
+  attachment_id: nullable(optional(int)),
+  bug_id: int,
+  count: int,
+  creation_time: datetime,
+  creator: string,
+  id: int,
+  is_private: boolean,
+  tags: array(string),
+  time: datetime,
+  text: string,
+};
+
+export interface CommentsTemplate {
+  comments: Comment[];
+}
+
+export const CommentsTemplateSpec: ObjectSpec<CommentsTemplate> = {
+  comments: array(object(CommentSpec)),
+};
+
+export interface Comments {
+  bugs: Map<number, CommentsTemplate>;
+  comments: Map<number, Comment>;
+}
+
+export const CommentsSpec: ObjectSpec<Comments> = {
+  bugs: map(intString, object(CommentsTemplateSpec)),
+  comments: map(intString, object(CommentSpec)),
+};
+
+export interface CreateCommentContent {
+  comment: string;
+  is_private: boolean;
+}
+
+export const CreateCommentContentSpec: ObjectSpec<CreateCommentContent> = {
+  comment: string,
+  is_private: boolean,
+};
+
+export interface CreatedComment {
+  id: int;
+}
+
+export const CreatedCommentSpec: ObjectSpec<CreatedComment> = {
+  id: int,
 };

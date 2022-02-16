@@ -11,6 +11,8 @@ import {
   object,
   array,
   maybeArray,
+  intString,
+  map,
 } from "../src/validators";
 
 // Force all times to UTC.
@@ -251,5 +253,50 @@ test("maybeArray", () => {
     maybeArray(string)(["foo", 5]),
   ).toThrowErrorMatchingInlineSnapshot(
     `"Error validating array: Expected a string but received \`5\`"`,
+  );
+});
+
+test("intString", () => {
+  expect(intString("5")).toBe(5);
+
+  expect(() => intString("")).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an integer as a string but received \`\\"\\"\`"`,
+  );
+  expect(() => intString(null)).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an integer as a string but received \`null\`"`,
+  );
+  expect(() => intString(undefined)).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an integer as a string but received \`undefined\`"`,
+  );
+  expect(() => intString(0)).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an integer as a string but received \`0\`"`,
+  );
+  expect(() => intString([])).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an integer as a string but received \`[]\`"`,
+  );
+  expect(() => intString([""])).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an integer as a string but received \`[\\"\\"]\`"`,
+  );
+});
+
+test("map", () => {
+  const myMap = new Map<number, string>();
+  myMap.set(5, "5");
+
+  expect(map(intString, string)({ "5": "5" })).toStrictEqual(myMap);
+
+  expect(() => map(intString, string)("")).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an object but received \`\\"\\"\`"`,
+  );
+  expect(() => map(intString, string)(null)).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an object but received \`null\`"`,
+  );
+  expect(() =>
+    map(intString, string)(undefined),
+  ).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an object but received \`undefined\`"`,
+  );
+  expect(() => map(intString, string)(0)).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an object but received \`0\`"`,
   );
 });
