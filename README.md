@@ -108,10 +108,11 @@ Return value is array of Comment objects.
 ## Creating comments
 
 ```javascript
-let comment = await api.createComment(123456, {
-  comment: "This is new comment on bug #123456",
-  options: { is_private: false },
-});
+let comment = await api.createComment(
+  123456, 
+  "This is new comment on bug #123456",
+  { is_private: false },
+);
 ```
 
 Returned value is ID of the newly-created comment.
