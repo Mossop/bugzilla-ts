@@ -129,3 +129,39 @@ export function maybeArray<T>(validator: Validator<T>): Validator<T | T[]> {
     return validator(val);
   };
 }
+
+export function intString(val: any): number {
+  if (typeof val != "string") {
+    throw new Error(
+      `Expected an integer as a string but received ${repr(val)}`,
+    );
+  }
+
+  let value = parseInt(val, 10);
+  if (value.toString() != val) {
+    throw new Error(
+      `Expected an integer as a string but received ${repr(val)}`,
+    );
+  }
+
+  return value;
+}
+
+export function map<K, V>(
+  keyValidator: Validator<K>,
+  valueValidator: Validator<V>,
+): Validator<Map<K, V>> {
+  return (val: any): Map<K, V> => {
+    if (!val || typeof val != "object") {
+      throw new Error(`Expected an object but received ${repr(val)}`);
+    }
+
+    let result = new Map<K, V>();
+
+    for (let [key, value] of Object.entries(val)) {
+      result.set(keyValidator(key), valueValidator(value));
+    }
+
+    return result;
+  };
+}

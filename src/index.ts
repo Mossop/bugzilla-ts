@@ -5,11 +5,19 @@ import type { DateTime } from "luxon";
 import type { BugzillaLink, SearchParams } from "./link";
 import { PublicLink, params, PasswordLink, ApiKeyLink } from "./link";
 import { FilteredQuery } from "./query";
-import type { Bug, User, History } from "./types";
-import { HistoryLookupSpec, BugSpec, UserSpec, VersionSpec } from "./types";
+import type { Bug, User, History, Comment } from "./types";
+import {
+  HistoryLookupSpec,
+  BugSpec,
+  UserSpec,
+  VersionSpec,
+  CommentsSpec,
+  CreatedCommentSpec,
+  CreateCommentContent,
+} from "./types";
 import { array, object } from "./validators";
 
-export type { Bug, User, History, Change, Flag } from "./types";
+export type { Bug, User, History, Change, Flag, Comment } from "./types";
 
 export default class BugzillaAPI {
   private readonly link: BugzillaLink;
@@ -136,5 +144,54 @@ export default class BugzillaAPI {
     searchParams.delete("list_id");
 
     return this.searchBugs(searchParams);
+  }
+
+  public async getComment(commentId: number): Promise<Comment | undefined> {
+    let comment = await this.link.get(
+      `bug/comment/${commentId}`,
+      object(CommentsSpec),
+    );
+
+    if (!comment) {
+      throw new Error(`Failed to get comment #${commentId}.`);
+    }
+
+    return comment.comments.get(commentId);
+  }
+
+  public async getBugComments(bugId: number): Promise<Comment[] | undefined> {
+    let comments = await this.link.get(
+      `bug/${bugId}/comment`,
+      object(CommentsSpec),
+    );
+
+    if (!comments) {
+      throw new Error(`Failed to get comments of bug #${bugId}.`);
+    }
+
+    return comments.bugs.get(bugId)?.comments;
+  }
+
+  public async createComment(
+    bugId: number,
+    comment: string,
+    options: Partial<Omit<CreateCommentContent, "comment">> = {},
+  ): Promise<number> {
+    const content = {
+      comment,
+      is_private: options.is_private ?? false,
+    };
+
+    let commentStatus = await this.link.post(
+      `bug/${bugId}/comment`,
+      object(CreatedCommentSpec),
+      content,
+    );
+
+    if (!comment) {
+      throw new Error("Failed to create comment.");
+    }
+
+    return commentStatus.id;
   }
 }

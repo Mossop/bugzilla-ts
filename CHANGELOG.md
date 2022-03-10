@@ -2,6 +2,8 @@
 
 # [Next](https://github.com/Mossop/bugzilla-ts/compare/v2.0.0...main)
 
+- Added `getComment`, `getBugComments` and `createComment` API methods.
+
 # [2.0.0](https://github.com/Mossop/bugzilla-ts/compare/v1.1.6...v2.0.0)
 
 - Fixed date/time validation.
