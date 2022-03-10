@@ -109,7 +109,7 @@ Return value is array of Comment objects.
 
 ```javascript
 let comment = await api.createComment(
-  123456, 
+  123456,
   "This is new comment on bug #123456",
   { is_private: false },
 );
