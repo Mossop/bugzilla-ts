@@ -42,3 +42,10 @@ jobs:
       - name: Codecov
         if: ${{ matrix.node-version == '17.x' }}
         uses: codecov/codecov-action@v2
+
+      - name: Semantic release
+        if: ${{ github.event_name == 'push' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
