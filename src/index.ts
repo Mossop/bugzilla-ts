@@ -188,7 +188,7 @@ export default class BugzillaAPI {
       content,
     );
 
-    if (!comment) {
+    if (!commentStatus) {
       throw new Error("Failed to create comment.");
     }
 
