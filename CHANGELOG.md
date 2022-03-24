@@ -2,6 +2,8 @@
 
 # [Next](https://github.com/Mossop/bugzilla-ts/compare/v2.2.0...main)
 
+- Run tests against a live Bugzilla instance.
+
 # [2.2.0](https://github.com/Mossop/bugzilla-ts/compare/v2.1.0...v2.2.0)
 
 - Added `createBug` and `updateBug` API methods.

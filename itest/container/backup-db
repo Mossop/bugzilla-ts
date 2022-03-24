@@ -1,0 +1,3 @@
+#! /bin/sh
+
+cp /var/www/html/bugzilla/data/db/bugs /var/www/html/bugzilla/data/db/bugs.bak
