@@ -14,6 +14,11 @@ import {
   CommentsSpec,
   CreatedCommentSpec,
   CreateCommentContent,
+  CreatedBugSpec,
+  CreateBugContent,
+  UpdatedBugTemplateSpec,
+  UpdateBugContent,
+  UpdatedBugTemplate,
 } from "./types";
 import { array, object } from "./validators";
 
@@ -193,5 +198,32 @@ export default class BugzillaAPI {
     }
 
     return commentStatus.id;
+  }
+
+  public async createBug(bug: CreateBugContent): Promise<number> {
+    let bugStatus = await this.link.post("bug", object(CreatedBugSpec), bug);
+
+    if (!bugStatus) {
+      throw new Error("Failed to create bug.");
+    }
+
+    return bugStatus.id;
+  }
+
+  public async updateBug(
+    bugIdOrAlias: number | string,
+    data: UpdateBugContent,
+  ): Promise<UpdatedBugTemplate> {
+    let bugStatus = await this.link.put(
+      `bug/${bugIdOrAlias}`,
+      object(UpdatedBugTemplateSpec),
+      data,
+    );
+
+    if (!bugStatus) {
+      throw new Error(`Failed to update bug #${bugIdOrAlias}.`);
+    }
+
+    return bugStatus;
   }
 }

@@ -15,9 +15,11 @@ import {
   ObjectSpec,
   intString,
   map,
+  double,
 } from "./validators";
 
 type int = number;
+type double = number;
 type datetime = DateTime;
 
 export interface LoginResponse {
@@ -50,26 +52,44 @@ export const UserSpec: ObjectSpec<User> = {
   real_name: string,
 };
 
-export interface Flag {
+export interface SetFlag {
+  status: string;
+  name?: string;
+  type_id?: int;
+  requestee?: string;
+}
+
+export const SetFlagSpec: ObjectSpec<SetFlag> = {
+  status: string,
+  name: optional(string),
+  type_id: optional(int),
+  requestee: optional(string),
+};
+
+export interface UpdateFlag extends SetFlag {
+  id?: int;
+  new?: boolean;
+}
+
+export const UpdateFlagSpec: ObjectSpec<UpdateFlag> = {
+  ...SetFlagSpec,
+  id: optional(int),
+  new: optional(boolean),
+};
+
+export interface Flag extends SetFlag {
   id: int;
-  name: string;
-  type_id: int;
   creation_date: datetime;
   modification_date: datetime;
-  status: string;
   setter: string;
-  requestee: string | undefined;
 }
 
 export const FlagSpec: ObjectSpec<Flag> = {
+  ...SetFlagSpec,
   id: int,
-  name: string,
-  type_id: int,
   creation_date: datetime,
   modification_date: datetime,
-  status: string,
   setter: string,
-  requestee: optional(string),
 };
 
 export interface Bug {
@@ -260,4 +280,122 @@ export interface CreatedComment {
 
 export const CreatedCommentSpec: ObjectSpec<CreatedComment> = {
   id: int,
+};
+
+export interface CreateBugContent {
+  product: string;
+  component: string;
+  summary: string;
+  version: string;
+  description: string;
+  op_sys: string;
+  platform: string;
+  priority: string;
+  severity: string;
+  alias?: string[];
+  assigned_to?: string;
+  cc?: string[];
+  comment_is_private?: boolean;
+  comment_tags?: string[];
+  groups?: string[];
+  keywords?: string[];
+  qa_contact?: string;
+  status?: string;
+  resolution?: string;
+  target_milestone?: string;
+  flags?: SetFlag[];
+}
+
+export interface CreatedBug {
+  id: int;
+}
+
+export const CreatedBugSpec: ObjectSpec<CreatedBug> = {
+  id: int,
+};
+
+export interface UpdateList<T> {
+  add?: T[];
+  remove?: T[];
+}
+
+export type UpdateOrReplaceList<T> =
+  | UpdateList<T>
+  | {
+      set: T[];
+    };
+
+export interface UpdateBugContent {
+  id_or_alias: int | string | string[];
+  ids: (int | string)[];
+  alias?: UpdateOrReplaceList<string>;
+  assigned_to?: string;
+  blocks?: UpdateOrReplaceList<int>;
+  depends_on?: UpdateOrReplaceList<int>;
+  cc?: UpdateList<string>;
+  is_cc_accessible?: boolean;
+  comment?: CreateCommentContent;
+  comment_is_private?: Map<number, boolean>;
+  comment_tags?: string[];
+  component?: string;
+  deadline?: datetime;
+  dupe_of?: int;
+  estimated_time?: double;
+  flags?: UpdateFlag[];
+  groups?: UpdateList<string>;
+  keywords?: UpdateOrReplaceList<string>;
+  op_sys?: string;
+  platform?: string;
+  priority?: string;
+  product?: string;
+  qa_contact?: string;
+  is_creator_accessible?: boolean;
+  remaining_time?: double;
+  reset_assigned_to?: boolean;
+  reset_qa_contact?: boolean;
+  resolution?: string;
+  see_also?: UpdateList<string>;
+  severity?: string;
+  status?: string;
+  summary?: string;
+  target_milestone?: string;
+  url?: string;
+  version?: string;
+  whiteboard?: string;
+  work_time?: double;
+}
+
+export interface UpdatedBugChanges {
+  added: string;
+  removed: string;
+}
+
+const UpdatedBugChangesSpec: ObjectSpec<UpdatedBugChanges> = {
+  added: string,
+  removed: string,
+};
+
+export interface UpdatedBug {
+  id: int;
+  alias: string[];
+  last_change_time: datetime;
+  changes: Map<
+    Omit<keyof UpdateBugContent, "id_or_alias" | "ids" | "alias">,
+    UpdatedBugChanges
+  >;
+}
+
+export const UpdatedBugSpec: ObjectSpec<UpdatedBug> = {
+  id: int,
+  alias: array(string),
+  last_change_time: datetime,
+  changes: map(string, object(UpdatedBugChangesSpec)),
+};
+
+export interface UpdatedBugTemplate {
+  bugs: UpdatedBug[];
+}
+
+export const UpdatedBugTemplateSpec: ObjectSpec<UpdatedBugTemplate> = {
+  bugs: array(object(UpdatedBugSpec)),
 };

@@ -165,3 +165,28 @@ export function map<K, V>(
     return result;
   };
 }
+
+export function either<F, S>(
+  first: Validator<F>,
+  second: Validator<S>,
+): Validator<F | S> {
+  return (val: any): F | S => {
+    let result: F | S;
+
+    try {
+      result = first(val);
+    } catch (_) {
+      try {
+        result = second(val);
+      } catch (e) {
+        throw new Error(
+          `Expected an ${first.name} or ${second.name} but received ${repr(
+            val,
+          )}`,
+        );
+      }
+    }
+
+    return result;
+  };
+}
