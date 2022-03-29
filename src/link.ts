@@ -140,6 +140,8 @@ export class ApiKeyLink extends BugzillaLink {
         headers: {
           ...(config.headers ?? {}),
           "X-BUGZILLA-API-KEY": this.apiKey,
+          // Red Hat Bugzilla uses Authorization header - https://bugzilla.redhat.com/docs/en/html/api/core/v1/general.html#authentication
+          Authorization: `Bearer ${this.apiKey}`,
         },
       },
       validator,
