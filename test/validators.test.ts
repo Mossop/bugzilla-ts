@@ -13,6 +13,7 @@ import {
   maybeArray,
   intString,
   map,
+  either,
 } from "../src/validators";
 
 // Force all times to UTC.
@@ -298,5 +299,25 @@ test("map", () => {
   );
   expect(() => map(intString, string)(0)).toThrowErrorMatchingInlineSnapshot(
     `"Expected an object but received \`0\`"`,
+  );
+});
+
+test("either", () => {
+  expect(() => either(string, int)("5"));
+  expect(() => either(string, int)(5));
+
+  expect(() => either(string, int)(null)).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an  or  but received \`null\`"`,
+  );
+  expect(() =>
+    either(string, int)(undefined),
+  ).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an  or  but received \`undefined\`"`,
+  );
+  expect(() => either(string, int)([])).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an  or  but received \`[]\`"`,
+  );
+  expect(() => either(string, int)({})).toThrowErrorMatchingInlineSnapshot(
+    `"Expected an  or  but received \`{}\`"`,
   );
 });

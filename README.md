@@ -116,3 +116,33 @@ let comment = await api.createComment(
 ```
 
 Returned value is ID of the newly-created comment.
+
+## Creating bugs
+
+```javascript
+let bug = await api.createBug({
+  product: "TestProduct",
+  component: "TestComponent",
+  version: "unspecified",
+  summary: "'This is a test bug - please disregard",
+  alias: "SomeAlias",
+  op_sys: "All",
+  priority: "P1",
+  rep_platform: "All",
+});
+```
+
+Returned value is ID of the newly-created bug.
+
+## Updating bugs
+
+Example of adding email address on cc list of bug #123456:
+
+```javascript
+let response = await api.updateBug(123456, {
+  id_or_alias: 123456,
+  cc: { add: "my@email.io" },
+});
+```
+
+Returned value is same as described in Bugzilla [docs](https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug.html#update-bug).

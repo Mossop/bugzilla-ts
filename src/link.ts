@@ -58,7 +58,7 @@ async function performRequest<T>(
 /**
  * Responsible for requesting data from the bugzilla instance handling any
  * necessary authentication and error handling that must happen. The chief
- * access is through the `get` and `post` methods.
+ * access is through the `get`, `post` and `put` methods.
  */
 export abstract class BugzillaLink {
   protected readonly instance: URL;
@@ -103,6 +103,25 @@ export abstract class BugzillaLink {
       {
         url: this.buildURL(path, searchParams).toString(),
         method: "POST",
+        data: JSON.stringify(content),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+      validator,
+    );
+  }
+
+  public async put<R, T>(
+    path: string,
+    validator: Validator<T>,
+    content: R,
+    searchParams?: SearchParams,
+  ): Promise<T> {
+    return this.request(
+      {
+        url: this.buildURL(path, searchParams).toString(),
+        method: "PUT",
         data: JSON.stringify(content),
         headers: {
           "Content-Type": "application/json",
