@@ -14,6 +14,7 @@ import {
   intString,
   map,
   either,
+  base64,
 } from "../src/validators";
 
 // Force all times to UTC.
@@ -319,5 +320,27 @@ test("either", () => {
   );
   expect(() => either(string, int)({})).toThrowErrorMatchingInlineSnapshot(
     `"Expected an  or  but received \`{}\`"`,
+  );
+});
+
+test("base64", () => {
+  expect(base64("base64 string")).toEqual(
+    Buffer.from([109, 171, 30, 235, 139, 45, 174, 41, 224]),
+  );
+
+  expect(() => base64(null)).toThrowErrorMatchingInlineSnapshot(
+    `"Expected a base64 encoded string but received \`null\`"`,
+  );
+  expect(() => base64(undefined)).toThrowErrorMatchingInlineSnapshot(
+    `"Expected a base64 encoded string but received \`undefined\`"`,
+  );
+  expect(() => base64(0)).toThrowErrorMatchingInlineSnapshot(
+    `"Expected a base64 encoded string but received \`0\`"`,
+  );
+  expect(() => base64([])).toThrowErrorMatchingInlineSnapshot(
+    `"Expected a base64 encoded string but received \`[]\`"`,
+  );
+  expect(() => base64([""])).toThrowErrorMatchingInlineSnapshot(
+    `"Expected a base64 encoded string but received \`[\\"\\"]\`"`,
   );
 });

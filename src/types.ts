@@ -16,6 +16,7 @@ import {
   intString,
   map,
   double,
+  base64,
 } from "./validators";
 
 type int = number;
@@ -269,11 +270,6 @@ export interface CreateCommentContent {
   is_private: boolean;
 }
 
-export const CreateCommentContentSpec: ObjectSpec<CreateCommentContent> = {
-  comment: string,
-  is_private: boolean,
-};
-
 export interface CreatedComment {
   id: int;
 }
@@ -365,12 +361,12 @@ export interface UpdateBugContent {
   work_time?: double;
 }
 
-export interface UpdatedBugChanges {
+export interface Changes {
   added: string;
   removed: string;
 }
 
-const UpdatedBugChangesSpec: ObjectSpec<UpdatedBugChanges> = {
+const ChangesSpec: ObjectSpec<Changes> = {
   added: string,
   removed: string,
 };
@@ -381,7 +377,7 @@ export interface UpdatedBug {
   last_change_time: datetime;
   changes: Map<
     Omit<keyof UpdateBugContent, "id_or_alias" | "ids" | "alias">,
-    UpdatedBugChanges
+    Changes
   >;
 }
 
@@ -389,7 +385,7 @@ export const UpdatedBugSpec: ObjectSpec<UpdatedBug> = {
   id: int,
   alias: array(string),
   last_change_time: datetime,
-  changes: map(string, object(UpdatedBugChangesSpec)),
+  changes: map(string, object(ChangesSpec)),
 };
 
 export interface UpdatedBugTemplate {
@@ -399,3 +395,104 @@ export interface UpdatedBugTemplate {
 export const UpdatedBugTemplateSpec: ObjectSpec<UpdatedBugTemplate> = {
   bugs: array(object(UpdatedBugSpec)),
 };
+
+export interface Attachment {
+  data: Buffer;
+  size: int;
+  creation_time: datetime;
+  last_change_time: datetime;
+  id: int;
+  bug_id: int;
+  file_name: string;
+  summary: string;
+  content_type: string;
+  is_private: boolean;
+  is_obsolete: boolean;
+  is_patch: boolean;
+  creator: string;
+  flags: Flag[];
+}
+
+export const AttachmentSpec: ObjectSpec<Attachment> = {
+  data: base64,
+  size: int,
+  creation_time: datetime,
+  last_change_time: datetime,
+  id: int,
+  bug_id: int,
+  file_name: string,
+  summary: string,
+  content_type: string,
+  is_private: boolean,
+  is_obsolete: boolean,
+  is_patch: boolean,
+  creator: string,
+  flags: array(object(FlagSpec)),
+};
+
+export interface Attachments {
+  bugs: Map<number, Attachment[]>;
+  attachments: Map<number, Attachment>;
+}
+
+export const AttachmentsSpec: ObjectSpec<Attachments> = {
+  bugs: map(intString, array(object(AttachmentSpec))),
+  attachments: map(intString, object(AttachmentSpec)),
+};
+
+export interface CreateAttachmentContent {
+  ids: int[];
+  data: Buffer | ArrayBuffer;
+  file_name: string;
+  summary: string;
+  content_type: string;
+  comment?: string;
+  is_patch?: boolean;
+  is_private?: boolean;
+  flags?: SetFlag[];
+}
+
+export interface CreatedAttachment {
+  ids: int[];
+}
+
+export const CreatedAttachmentSpec: ObjectSpec<CreatedAttachment> = {
+  ids: array(int),
+};
+
+export interface UpdateAttachmentContent {
+  attachment_id?: int;
+  ids?: int[];
+  file_name?: string;
+  summary?: string;
+  comment?: string;
+  content_type?: string;
+  is_patch?: boolean;
+  is_private?: boolean;
+  is_obsolete?: boolean;
+  flags?: UpdateFlag[];
+}
+
+export interface UpdatedAttachment {
+  id: int;
+  last_change_time: datetime;
+  changes: Map<
+    Omit<keyof UpdateAttachmentContent, "attachment_id" | "ids">,
+    Changes
+  >;
+}
+
+export const UpdatedAttachmentSpec: ObjectSpec<UpdatedAttachment> = {
+  id: int,
+  last_change_time: datetime,
+  changes: map(string, object(ChangesSpec)),
+};
+
+export interface UpdatedAttachmentTemplate {
+  attachments: UpdatedAttachment[];
+}
+
+export const UpdatedAttachmentTemplateSpec: ObjectSpec<UpdatedAttachmentTemplate> =
+  {
+    attachments: array(object(UpdatedAttachmentSpec)),
+  };
