@@ -5,7 +5,11 @@ Typesafe access to [Bugzilla's REST API](https://bugzilla.readthedocs.io/en/late
 Very early work in progress, getting info from a bug or searching bugs is the main priority right
 now.
 
-No tests as yet. This is a quick and dirty implementation to support a side project I'm working on.
+# Tests
+
+Some basic tests now exist. `npm test` will run the main tests. `npm itest` will run some
+integration tests against a real Bugzilla instance however you must have docker installed
+in order to run these.
 
 # API
 

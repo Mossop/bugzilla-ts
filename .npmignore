@@ -4,6 +4,7 @@
 /jest.config.js
 /tsconfig.*
 /test
+/itest
 
 *.tsbuildinfo
 .*

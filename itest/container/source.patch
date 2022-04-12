@@ -1,0 +1,7 @@
+diff --git a/Bugzilla/Util.pm b/Bugzilla/Util.pm
+index fcd4aff91..40b6faa59 100644
+--- a/Bugzilla/Util.pm
++++ b/Bugzilla/Util.pm
+@@ -102 +102 @@ sub html_quote {
+-    $var =~ tr/\x{202a}-\x{202e}//d;
++    # $var =~ tr/\x{202a}-\x{202e}//d;

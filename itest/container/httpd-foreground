@@ -1,0 +1,15 @@
+#! /bin/bash
+set -e
+
+if [ ! -f /var/www/html/bugzilla/data/db/bugs ]; then
+  echo "\$answer{'ADMIN_LOGIN'} = '${ADMIN_EMAIL}';" >answers
+  echo "\$answer{'ADMIN_EMAIL'} = '${ADMIN_EMAIL}';" >>answers
+  echo "\$answer{'ADMIN_PASSWORD'} = '${ADMIN_PASSWORD}';" >>answers
+  echo "\$answer{'ADMIN_REALNAME'} = '${ADMIN_REALNAME}';" >>answers
+  ./checksetup.pl answers
+  rm answers
+fi
+
+echo "Starting apache..."
+source /etc/apache2/envvars
+exec /usr/sbin/apache2 -DFOREGROUND "$@"
