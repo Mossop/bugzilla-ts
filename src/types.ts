@@ -318,7 +318,7 @@ export interface UpdateList<T> {
 export type UpdateOrReplaceList<T> =
   | UpdateList<T>
   | {
-      set: T[];
+      set?: T[];
     };
 
 export interface UpdateBugContent {

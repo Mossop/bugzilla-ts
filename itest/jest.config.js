@@ -9,6 +9,8 @@ module.exports = {
   maxConcurrency: 1,
   maxWorkers: 1,
 
+  testTimeout: 10000,
+
   globalSetup: path.join(__dirname, "setup.js"),
   globalTeardown: path.join(__dirname, "teardown.js"),
   setupFilesAfterEnv: [path.join(__dirname, "testSetup.js")],
