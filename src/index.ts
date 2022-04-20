@@ -5,7 +5,20 @@ import type { DateTime } from "luxon";
 import type { BugzillaLink, SearchParams } from "./link";
 import { PublicLink, params, PasswordLink, ApiKeyLink } from "./link";
 import { FilteredQuery } from "./query";
-import type { Bug, User, History, Comment } from "./types";
+import type {
+  Bug,
+  User,
+  History,
+  Comment,
+  CreateCommentContent,
+  CreateBugContent,
+  UpdateBugContent,
+  UpdatedBug,
+  Attachment,
+  CreateAttachmentContent,
+  UpdateAttachmentContent,
+  UpdatedAttachment,
+} from "./types";
 import {
   HistoryLookupSpec,
   BugSpec,
@@ -13,16 +26,23 @@ import {
   VersionSpec,
   CommentsSpec,
   CreatedCommentSpec,
-  CreateCommentContent,
   CreatedBugSpec,
-  CreateBugContent,
   UpdatedBugTemplateSpec,
-  UpdateBugContent,
-  UpdatedBugTemplate,
+  AttachmentsSpec,
+  CreatedAttachmentSpec,
+  UpdatedAttachmentTemplateSpec,
 } from "./types";
 import { array, object } from "./validators";
 
-export type { Bug, User, History, Change, Flag, Comment } from "./types";
+export type {
+  Bug,
+  User,
+  History,
+  Change,
+  Flag,
+  Comment,
+  Attachment,
+} from "./types";
 
 export default class BugzillaAPI {
   private readonly link: BugzillaLink;
@@ -213,17 +233,85 @@ export default class BugzillaAPI {
   public async updateBug(
     bugIdOrAlias: number | string,
     data: UpdateBugContent,
-  ): Promise<UpdatedBugTemplate> {
-    let bugStatus = await this.link.put(
+  ): Promise<UpdatedBug[]> {
+    let response = await this.link.put(
       `bug/${bugIdOrAlias}`,
       object(UpdatedBugTemplateSpec),
       data,
     );
 
-    if (!bugStatus) {
+    if (!response) {
       throw new Error(`Failed to update bug #${bugIdOrAlias}.`);
     }
 
-    return bugStatus;
+    return response.bugs;
+  }
+
+  public async getAttachment(
+    attachmentId: number,
+  ): Promise<Attachment | undefined> {
+    let attachment = await this.link.get(
+      `bug/attachment/${attachmentId}`,
+      object(AttachmentsSpec),
+    );
+
+    if (!attachment) {
+      throw new Error(`Failed to get attachment #${attachmentId}.`);
+    }
+
+    return attachment.attachments.get(attachmentId);
+  }
+
+  public async getBugAttachments(
+    bugId: number,
+  ): Promise<Attachment[] | undefined> {
+    let attachments = await this.link.get(
+      `bug/${bugId}/attachment`,
+      object(AttachmentsSpec),
+    );
+
+    if (!attachments) {
+      throw new Error(`Failed to get attachments of bug #${bugId}.`);
+    }
+
+    return attachments.bugs.get(bugId);
+  }
+
+  public async createAttachment(
+    bugId: number,
+    attachment: CreateAttachmentContent,
+  ): Promise<number[]> {
+    const dataBase64 = {
+      data: Buffer.from(attachment.data).toString("base64"),
+    };
+
+    let attachmentStatus = await this.link.post(
+      `bug/${bugId}/attachment`,
+      object(CreatedAttachmentSpec),
+      { ...attachment, ...dataBase64 },
+    );
+
+    if (!attachmentStatus) {
+      throw new Error("Failed to create attachment.");
+    }
+
+    return attachmentStatus.ids;
+  }
+
+  public async updateAttachment(
+    attachmentId: number,
+    data: UpdateAttachmentContent,
+  ): Promise<UpdatedAttachment[]> {
+    let response = await this.link.put(
+      `bug/attachment/${attachmentId}`,
+      object(UpdatedAttachmentTemplateSpec),
+      data,
+    );
+
+    if (!response) {
+      throw new Error(`Failed to update attachment #${attachmentId}.`);
+    }
+
+    return response.attachments;
   }
 }

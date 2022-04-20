@@ -86,6 +86,22 @@ export const int = typedValidator<number>("number");
 export const double = typedValidator<number>("number");
 export const string = typedValidator<string>("string");
 
+export function base64(val: any): Buffer {
+  if (typeof val != "string") {
+    throw new Error(
+      `Expected a base64 encoded string but received ${repr(val)}`,
+    );
+  }
+
+  try {
+    return Buffer.from(val, "base64");
+  } catch (_) {
+    throw new Error(
+      `Expected a base64 encoded string but received ${repr(val)}`,
+    );
+  }
+}
+
 export function nullable<T>(validator: Validator<T>): Validator<T | null>;
 export function nullable<T>(validator: Validator<T>, result: T): Validator<T>;
 export function nullable<T>(

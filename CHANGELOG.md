@@ -3,10 +3,12 @@
 # [Next](https://github.com/Mossop/bugzilla-ts/compare/v2.2.0...main)
 
 - Run tests against a live Bugzilla instance.
+- Added `getAttachment`, `getBugAttachments`, `createAttachment` and `updateAttachment` API methods.
 
 # [2.2.0](https://github.com/Mossop/bugzilla-ts/compare/v2.1.0...v2.2.0)
 
 - Added `createBug` and `updateBug` API methods.
+- Added support for Authorization header for Red Hat Bugzilla
 
 # [2.1.0](https://github.com/Mossop/bugzilla-ts/compare/v2.0.0...v2.1.0)
 

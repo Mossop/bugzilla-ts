@@ -103,7 +103,7 @@ Return value is Comment object.
 ## Retrieving all comments of bug
 
 ```javascript
-// .getComments() accepts one parameter, ID of bug, as number
+// .getBugComments() accepts one parameter, ID of bug, as number
 let comments = await api.getBugComments(123456);
 ```
 
@@ -150,3 +150,49 @@ let response = await api.updateBug(123456, {
 ```
 
 Returned value is same as described in Bugzilla [docs](https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug.html#update-bug).
+
+## Retrieving attachments by ID
+
+```javascript
+// .getAttachment() accepts one parameter, ID of attachment, as number
+let attachment = await api.getAttachment(123456);
+```
+
+Return value is Attachment object.
+
+## Retrieving all attachments of bug
+
+```javascript
+// .getBugsAttachments() accepts one parameter, ID of bug, as number
+let attachments = await api.getBugAttachments(123456);
+```
+
+Return value is array of Attachment objects.
+
+## Creating attachments
+
+```javascript
+let attachment = await api.createAttachment(123456, {
+  ids: [123456, 123457];
+  data:  Buffer.from('Attachment content');
+  file_name: "Attachment name";
+  summary: "Attachment summary";
+  content_type: "text/plain";
+  is_private?: false;
+});
+```
+
+Returned value is an array of IDs of the newly-created attachments.
+
+## Updating attachments
+
+Example of changing content type of attachment #123456:
+
+```javascript
+let response = await api.updateAttachment(123456, {
+  attachment_id: 123456,
+  content_type: "text/plain",
+});
+```
+
+Returned value is same as described in Bugzilla [docs](https://bugzilla.readthedocs.io/en/latest/api/core/v1/attachment.html#update-attachment).
