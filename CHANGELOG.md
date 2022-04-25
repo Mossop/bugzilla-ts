@@ -4,6 +4,7 @@
 
 - Run tests against a live Bugzilla instance.
 - Added `getAttachment`, `getBugAttachments`, `createAttachment` and `updateAttachment` API methods.
+- Add integration tests for rest of API methods
 
 # [2.2.0](https://github.com/Mossop/bugzilla-ts/compare/v2.1.0...v2.2.0)
 
