@@ -1,6 +1,7 @@
 /.github
 /coverage
 /scripts
+/jest.ci.config.js
 /jest.config.js
 /tsconfig.*
 /test
