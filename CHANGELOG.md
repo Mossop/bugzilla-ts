@@ -1,5 +1,7 @@
 # Change Log
 
+# [Next](https://github.com/Mossop/bugzilla-ts/compare/v3.0.0...main)
+
 # [3.0.0](https://github.com/Mossop/bugzilla-ts/compare/v2.2.0...v3.0.0)
 
 - Run tests against a live Bugzilla instance.
