@@ -1,5 +1,5 @@
 import {
-  DefaultRequestBody,
+  DefaultBodyType,
   PathParams,
   ResponseComposition,
   rest,
@@ -38,7 +38,7 @@ test("PublicLink", async () => {
   let responseHandler = jest.fn(
     (
       req: RestRequest<never, PathParams>,
-      res: ResponseComposition<DefaultRequestBody>,
+      res: ResponseComposition<DefaultBodyType>,
       ctx: RestContext,
     ) =>
       res(
